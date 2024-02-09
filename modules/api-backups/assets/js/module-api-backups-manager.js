@@ -1347,51 +1347,6 @@ linode_action_cancel_backups = function (pObj) {
     });
 };
 
-// Check Linode Status.
-// linode_action_linode_status = function ( pObj ) {
-//     var websiteId = jQuery( pObj ).attr( 'website_id' );
-//
-//     var data = mainwp_secure_data({
-//         action:'linode_action_linode_status',
-//         website_id: '8',
-//         backup_api: 'linode'
-//     });
-//
-//     jQuery.post( ajaxurl, data, function ( response ) {
-//         response = jQuery.trim( response );
-//
-//         console.log( response );
-//
-//         if ( response === 'true' ) {
-//             jQuery('#backups_site_toast').addClass( 'green' )
-//                 .toast({
-//                     class: 'success',
-//                     position: 'top right',
-//                     displayTime: 9000,
-//                     message: 'The Linode has been restored & the server will re-boot in 15 seconds...',
-//                 })
-//             ;
-//
-//             // Stop button animation.
-//             //jQuery( pObj ).removeClass('disabled loading' );
-//
-//         } else {
-//             jQuery('#backups_site_toast').addClass( 'red' )
-//                 .toast({
-//                     class: 'warning',
-//                     position: 'top right',
-//                     displayTime: 9000,
-//                     message: 'There was an issue while restoring your backup...',
-//                 })
-//             ;
-//
-//             // Stop button animation.
-//             //jQuery( pObj ).removeClass('disabled loading' );
-//
-//         }
-//     } );
-// };
-
 /********************************************************
  * Digital Ocean Functions.
  */
@@ -1432,8 +1387,6 @@ digitalocean_action_create_backup = function (pObj) {
         website_id: websiteId,
         backup_api: 'digitalocean'
     });
-
-    console.log(data);
 
     jQuery(button).html('<i class="notched circle loading icon"></i>');
 

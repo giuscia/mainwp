@@ -161,14 +161,31 @@ class Api_Backups_3rd_Party {
 	/** @noinspection PhpUnused */
 	public static function render_mainwp_backups_page() {
 		?>
+<!--			<div class="mainwp-sub-header">-->
+<!--				<div class="ui grid">-->
+<!--					<div class="ui two column row">-->
+<!--						<div class="middle aligned column ui">-->
+<!--							<button id="action_backup_selected_sites" class="ui green mini button">--><?php //esc_html_e( 'Backup Selected Sites', 'mainwp' ); ?><!--</button>-->
+<!--						</div>-->
+<!--						<div class="right aligned middle aligned column">-->
+<!--							<a href="admin.php?page=SettingsApiBackups" class="ui mini green basic button">--><?php //esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?><!--</a>-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
 			<div class="mainwp-sub-header">
 				<div class="ui grid">
 					<div class="ui two column row">
-						<div class="middle aligned column ui">
-							<button id="action_backup_selected_sites" class="ui green mini button"><?php esc_html_e( 'Backup Selected Sites', 'mainwp' ); ?></button>
-						</div>
+						<div class="middle aligned column ui"></div>
 						<div class="right aligned middle aligned column">
-							<a href="admin.php?page=SettingsApiBackups" class="ui mini green basic button"><?php esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?></a>
+							<button id="action_backup_selected_sites" class="ui green mini button"><?php esc_html_e( 'Backup Selected Sites', 'mainwp' ); ?></button>
+							<a id="api_backup_settings"
+							   href="admin.php?page=SettingsApiBackups">
+								<button class="ui mini right labeled icon button">
+									<i class="right inverted cogs icon"></i>
+									<?php esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?>
+								</button>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -559,7 +576,7 @@ class Api_Backups_3rd_Party {
 							</div>
 						<?php endif; ?>
 					<?php } ?>
-				
+
 				<?php // Display Plesk Table. ?>
 				<?php
 				if ( 'plesk' === $backup_api ) {
@@ -608,7 +625,7 @@ class Api_Backups_3rd_Party {
 													data-inverted=""
 													data-position="top center">
 												<i class="undo icon"></i>
-											</button>		
+											</button>
 											<?php
 												/**
 												 * Grab installation domain & build path to download.
@@ -617,18 +634,18 @@ class Api_Backups_3rd_Party {
 												$installation_domain = self::get_plesk_home_dir();
 												$dirdl               = '/var/www/vhosts/' . $installation_domain . '/wordpress-backups/';
 											?>
-																				
+
 											<a id="plesk_download_button" class="ui circular icon button  mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_downlaod_backup item"
 													installation_id="<?php echo intval( $installation_id ); ?>"
 													website_id="<?php echo intval( $website['id'] ); ?>"
 													backup_name="<?php echo esc_attr( $backup->value->fileName->value ); ?>"
-													href="admin.php?page=SiteOpen&websiteid=<?php echo intval( $website['id'] ); ?>&dirdl=<?php echo esc_attr( rawurlencode( $dirdl ) ); ?>&filedl=<?php echo esc_attr( rawurlencode( $backup->value->fileName->value ) ); ?>&_opennonce=<?php echo esc_html( wp_create_nonce( 'mainwp-admin-nonce' ) ); ?>" 
+													href="admin.php?page=SiteOpen&websiteid=<?php echo intval( $website['id'] ); ?>&dirdl=<?php echo esc_attr( rawurlencode( $dirdl ) ); ?>&filedl=<?php echo esc_attr( rawurlencode( $backup->value->fileName->value ) ); ?>&_opennonce=<?php echo esc_html( wp_create_nonce( 'mainwp-admin-nonce' ) ); ?>"
 													data-tooltip="<?php esc_attr_e( 'Download Backup', 'mainwp' ); ?>"
 													data-inverted=""
 													data-position="top center"
 													target="_blank">
 													<i class="download icon"></i>
-												</a>												
+												</a>
 											<button id="plesk_delete_button" class="ui circular icon button mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_delete_backup item"
 													installation_id="<?php echo intval( $installation_id ); ?>"
 													website_id="<?php echo intval( $website['id'] ); ?>"
@@ -701,7 +718,7 @@ class Api_Backups_3rd_Party {
 						$available_manual_database_backups = array();
 					}
 					?>
-					<div class="ui bottom attached active tab" data-tab="cpanel-native">						
+					<div class="ui bottom attached active tab" data-tab="cpanel-native">
 							<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
 								<thead>
 								<tr>
@@ -1247,7 +1264,7 @@ class Api_Backups_3rd_Party {
 										<td></td>
 										<td></td>
 										<td>
-											
+
 										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
 											website_id="<?php echo intval( $website['id'] ); ?>"
 											backup_type="<?php echo esc_attr( $backup->type ); ?>"
@@ -1933,6 +1950,10 @@ class Api_Backups_3rd_Party {
 
 	public static function get_plesk_api_key() {
 		return Api_Backups_Utility::get_instance()->get_api_key( 'plesk' );
+	}
+
+	public static function get_kinsta_api_key() {
+		return Api_Backups_Utility::get_instance()->get_api_key( 'kinsta' );
 	}
 
 	/**

@@ -288,7 +288,7 @@ class Api_Backups_Admin {
 	 */
 	public static function render_header( $shownPage = '' ) {
 		$params = array(
-			'title'      => esc_html__( 'API Backup - BETA', 'mainwp' ),
+			'title'      => esc_html__( 'API Backups - BETA', 'mainwp' ),
 			'which'      => 'page_api_backups_overview',
 			'wrap_class' => 'mainwp-module-api-backups-content-wrapper',
 		);

@@ -535,6 +535,7 @@ class Api_Backups_Utility {
 			'cloudways',
 			'cpanel',
 			'plesk',
+			'kinsta',
 		);
 
 		if ( ! in_array( $name, $names ) ) {
@@ -566,6 +567,7 @@ class Api_Backups_Utility {
 			'cloudways',
 			'cpanel',
 			'plesk',
+			'kinsta',
 		);
 
 		if ( ! in_array( $name, $names ) ) {
@@ -611,6 +613,7 @@ class Api_Backups_Utility {
 			'cloudways',
 			'cpanel',
 			'plesk',
+			'kinsta',
 		);
 
 		if ( ! in_array( $name, $names ) ) {
@@ -650,6 +653,7 @@ class Api_Backups_Utility {
 			'cloudways',
 			'cpanel',
 			'plesk',
+			'kinsta',
 		);
 
 		if ( ! in_array( $name, $names ) ) {

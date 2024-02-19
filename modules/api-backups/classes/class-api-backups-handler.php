@@ -89,7 +89,7 @@ class Api_Backups_Handler {
 		$app_id     = isset( $site_options['mainwp_3rd_party_app_id'] ) ? $site_options['mainwp_3rd_party_app_id'] : null;
 		$backup_api = isset( $site_options['mainwp_3rd_party_api'] ) ? strtolower( $site_options['mainwp_3rd_party_api'] ) : null;
 
-		if ( $backup_api !== 'cpanel' && $backup_api !== 'plesk' ) {
+		if ( $backup_api !== 'cpanel' && $backup_api !== 'plesk'  && $backup_api !== 'kinsta' ) {
 			if ( empty( $server_id ) || empty( $backup_api ) ) {
 				wp_send_json( array( 'error' => esc_html__( 'Error: Check Backup API settings for the website. Server Id & or Backup API provider not set.', 'mainwp' ) ) );
 			}
@@ -222,6 +222,22 @@ class Api_Backups_Handler {
 						}
 					}
 					wp_die( esc_html__( 'Error: Plesk Backup', 'mainwp' ) );
+				}
+				break;
+			case 'kinsta':
+				$result = Api_Backups_3rd_Party::kinsta_action_create_backup( $return, $website_id );
+
+				if ( $die ) {
+					$api_response = $result;
+					if ( is_array( $api_response ) ) {
+						if ( ! $api_response['status'] === true ) {
+							self::send_backups_response( false );
+						} else {
+							// Return success.
+							self::send_backups_response();
+						}
+					}
+					wp_die( esc_html__( 'Error: Kinsta Backup', 'mainwp' ) );
 				}
 				break;
 		}

@@ -731,20 +731,6 @@ class Api_Backups_Settings {
 		$api_backup_provider      = isset( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) && ! empty( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) ? intval( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) : '';
 		$api_backup_provider_name = '';
 
-//		if ( ! empty( $api_backup_provider ) ) {
-//			if ( 1 === $api_backup_provider ) {
-//				$api_backup_provider_name = 'DigitalOcean';
-//			} elseif ( 2 === $api_backup_provider ) {
-//				$api_backup_provider_name = 'Linode';
-//			} elseif ( 3 === $api_backup_provider ) {
-//				$api_backup_provider_name = 'Vultr';
-//			} elseif ( 4 === $api_backup_provider ) {
-//				$api_backup_provider_name = 'cPanel';
-//			} elseif ( 5 === $api_backup_provider ) {
-//				$api_backup_provider_name = 'Plesk';
-//			}
-//		}
-
 		if ( empty( $api_backup_provider ) ) {
 			return;
 		}
@@ -821,6 +807,10 @@ class Api_Backups_Settings {
 		$enable_kinsta_individual = isset( $_POST['mainwp_enable_kinsta_individual'] ) ? $_POST['mainwp_enable_kinsta_individual'] : '0';
 		Api_Backups_Helper::update_website_option( $website_id, 'mainwp_enable_kinsta_individual', $enable_kinsta_individual );
 
+		// Store Kinsta Environment ID.
+		$kinsta_environment_id = isset( $_POST['kinsta_environment_id'] ) ? $_POST['kinsta_environment_id'] : '0';
+		Api_Backups_Helper::update_website_option( $website_id, 'mainwp_kinsta_environment_id', $kinsta_environment_id );
+
 		// Store Kinsta Individual API Key.
 		$kinsta_api_key = isset( $_POST['mainwp_kinsta_api_key'] ) ? $_POST['mainwp_kinsta_api_key'] : '';
 		Api_Backups_Utility::get_instance()->update_child_api_key( $website_id, 'kinsta', $kinsta_api_key );
@@ -858,6 +848,7 @@ class Api_Backups_Settings {
 					'cpanel_account_username',
 					'plesk_api_url',
 					'mainwp_plesk_installation_id',
+					'mainwp_kinsta_environment_id',
 				)
 			);
 
@@ -876,6 +867,7 @@ class Api_Backups_Settings {
 				$mainwp_cpanel_account_username       = isset( $opts['cpanel_account_username'] ) ? $opts['cpanel_account_username'] : '';
 				$mainwp_plesk_api_url                 = isset( $opts['plesk_api_url'] ) ? $opts['plesk_api_url'] : '';
 				$mainwp_plesk_installation_id         = isset( $opts['mainwp_plesk_installation_id'] ) ? $opts['mainwp_plesk_installation_id'] : '';
+				$mainwp_kinsta_environment_id         = isset( $opts['mainwp_kinsta_environment_id'] ) ? $opts['mainwp_kinsta_environment_id'] : '';
 			}
 		}
 
@@ -990,6 +982,14 @@ class Api_Backups_Settings {
 				</div>
 			</div>
 			<div class="mainwp_kinsta_menu_container" style="display:none;">
+				<div class="ui grid field">
+					<label class="six wide column middle aligned"><?php esc_html_e( 'Environment ID', 'mainwp' ); ?></label>
+					<div class="ui six wide column" data-tooltip="<?php esc_attr_e( 'Enter the Kinsta Environment ID.', 'mainwp' ); ?>" data-inverted="" data-position="top left">
+						<div class="ui left labeled input">
+							<input type="text" id="kinsta_environment_id" name="kinsta_environment_id" value="<?php echo ( empty( $mainwp_kinsta_environment_id ) ? '' : esc_html( $mainwp_kinsta_environment_id ) ); ?>" />
+						</div>
+					</div>
+				</div>
 				<div class="ui grid field">
 					<label class="six wide column middle aligned"><?php esc_html_e( 'Overwrite Global Settings', 'mainwp' ); ?></label>
 					<div id="individual_settings_check" class="ten wide column ui toggle checkbox" data-tooltip="<?php esc_attr_e( 'If enabled, the Kinsta Individual Settings will be used.', 'mainwp' ); ?>" data-inverted="" data-position="bottom left">
@@ -1118,7 +1118,7 @@ class Api_Backups_Settings {
 					jQuery('.mainwp_kinsta_individual_container').hide();
 				}
 
-				// Check if cPanel is selected when using dropdown.
+				// Check which Provider is `selected` when using dropdown & show/hide the appropriate settings.
 				jQuery( "#mainwp_managesites_edit_module_api_backups_provider" ).on( "change", function() {
 
 					var selected = jQuery(this).val();
@@ -1141,6 +1141,14 @@ class Api_Backups_Settings {
 						jQuery('.mainwp_kinsta_menu_container').hide();
 					}
 				} );
+
+				// Check which Provider is `selected` when using dropdown & show/hide the appropriate settings.
+				// jQuery("#mainwp_managesites_edit_module_api_backups_provider").on("change", function() {
+				// 	var selected = jQuery(this).val();
+				// 	jQuery('.mainwp_cpanel_menu_container').toggle(selected === '4');
+				// 	jQuery('.mainwp_plesk_menu_container').toggle(selected === '5');
+				// 	jQuery('.mainwp_kinsta_menu_container').toggle(selected === '6');
+				// });
 
 				// Toggle cPanel Individual Settings on/off when clicked.
 				jQuery( "#mainwp_enable_cpanel_individual" ).on( "change", function() {

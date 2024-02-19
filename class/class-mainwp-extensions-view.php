@@ -149,7 +149,7 @@ class MainWP_Extensions_View {
 			<?php if ( MainWP_Utility::show_mainwp_message( 'notice', 'mainwp-extensions-info-message' ) ) { ?>
 					<div class="ui info message">
 						<i class="close icon mainwp-notice-dismiss" notice-id="mainwp-extensions-info-message"></i>
-						<?php printf( esc_html__( 'Quickly access, install, and activate your MainWP extensions.  If you need additional help with managing your MainWP Extensions, please check this %1$shelp documentation%2$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/category/getting-started/first-steps-with-extensions/" target="_blank">', '</a>' ); ?>
+						<?php printf( esc_html__( 'Quickly access, install, and activate your MainWP extensions.  If you need additional help with managing your MainWP Extensions, please check this %1$shelp documentation%2$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/category/getting-started/first-steps-with-extensions/" target="_blank">', '</a> <i class="external alternate icon"></i>' ); ?>
 					</div>
 					<?php } ?>
 					<div class="ui segment" id="mainwp-extensions-search-no-results" style="display:none">
@@ -267,13 +267,11 @@ class MainWP_Extensions_View {
 		</div>
 
 		<div class="ui tiny second coupled modal" id="mainwp-privacy-info-modal">
+			<i class="close icon"></i>
 			<div class="header"></div>
 			<div class="content"></div>
-			<div class="actions">
-				<div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
-			</div>
 		</div>
-			<?php
+		<?php
 	}
 
 	/**
@@ -322,7 +320,7 @@ class MainWP_Extensions_View {
 			</div>
 			<a class="ui basic green button" href="https://mainwp.com/mainwp-extensions/" target="_blank"><?php esc_html_e( 'Browse All Extensions', 'mainwp' ); ?></a> <a class="ui green button" href="https://mainwp.com/free-vs-pro/" target="_blank"><?php esc_html_e( 'Free Vs. Pro', 'mainwp' ); ?></a> <a class="ui green button" href="https://mainwp.com/signup/" target="_blank"><?php esc_html_e( 'Get Pro', 'mainwp' ); ?></a>
 			<h2 class="header"><?php esc_html_e( 'How to install your MainWP Extensions?', 'mainwp' ); ?></h2>
-			<p><?php printf( esc_html__( 'Once you have ordered MainWP Extensions, you can either use the %1$sautomatic extension installation%2$s option or %3$smanual installation%4$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/install-extensions/" target="_blank">', '</a>', '<a href="https://kb.mainwp.com/docs/my-downloads-and-api-keys/" target="_blank">', '</a>' ); ?></p>
+			<p><?php printf( esc_html__( 'Once you have ordered MainWP Extensions, you can either use the %1$sautomatic extension installation%2$s option or %3$smanual installation%4$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/install-extensions/" target="_blank">', '</a> <i class="external alternate icon"></i>', '<a href="https://kb.mainwp.com/docs/my-downloads-and-api-keys/" target="_blank">', '</a> <i class="external alternate icon"></i>' ); ?></p>
 		</div>
 		<?php
 	}
@@ -487,16 +485,21 @@ class MainWP_Extensions_View {
 					</div>
 
 					<div class="meta">
-				<?php echo '<i class="code branch icon"></i>' . esc_html( $extension['version'] ); ?> <?php echo ( isset( $extension['DocumentationURI'] ) && ! empty( $extension['DocumentationURI'] ) ) ? ' - <a href="' . esc_url( str_replace( array( 'http:', 'https:' ), '', $extension['DocumentationURI'] ) ) . '" target="_blank">' . esc_html__( 'Documentation', 'mainwp' ) . '</a>' : ''; ?>
+				<?php echo '<i class="code branch icon"></i>' . esc_html( $extension['version'] ); ?> <?php echo ( isset( $extension['DocumentationURI'] ) && ! empty( $extension['DocumentationURI'] ) ) ? ' - <a href="' . esc_url( str_replace( array( 'http:', 'https:' ), '', $extension['DocumentationURI'] ) ) . '" target="_blank">' . esc_html__( 'Documentation', 'mainwp' ) . '</a> <i class="external alternate icon"></i>' : ''; ?>
 				</div>
-				<?php if ( isset( $extension['apiManager'] ) && $extension['apiManager'] ) { ?>
-					<?php if ( ! $active && ! $disabled ) { ?>
-						<span class="ui red ribbon label"><?php esc_html_e( 'License not activated', 'mainwp' ); ?></span>
+				<?php if ( 'mainwp-cost-tracker-assistant-extension/mainwp-cost-tracker-assistant-extension.php' === $extension['slug'] || 'mainwp-time-tracker-extension/mainwp-time-tracker-extension.php' === $extension['slug'] ) : ?>
+					<span class="ui blue ribbon label"><?php esc_html_e( 'Test license', 'mainwp' ); ?></span>
+				<?php else : ?>
+					<?php if ( isset( $extension['apiManager'] ) && $extension['apiManager'] ) { ?>
+						<?php if ( ! $active && ! $disabled ) { ?>
+							<span class="ui red ribbon label"><?php esc_html_e( 'License not activated', 'mainwp' ); ?></span>
+						<?php } ?>
 					<?php } ?>
-				<?php } ?>
-				<?php if ( isset( $extension_update->response[ $extension['slug'] ] ) ) { ?>
-					<a href="<?php echo esc_url( admin_url( 'plugins.php' ) ); ?>" class="ui yellow ribbon label"><?php esc_html_e( 'Update available', 'mainwp' ); ?></a>
-				<?php } ?>
+					<?php if ( isset( $extension_update->response[ $extension['slug'] ] ) ) { ?>
+						<a href="<?php echo esc_url( admin_url( 'plugins.php' ) ); ?>" class="ui yellow ribbon label"><?php esc_html_e( 'Update available', 'mainwp' ); ?></a>
+					<?php } ?>
+				<?php endif; ?>
+
 				<div class="description">
 					<?php echo esc_html( preg_replace( '/\<cite\>.*\<\/cite\>/', '', $extension['description'] ) ); ?>
 				</div>
@@ -571,6 +574,7 @@ class MainWP_Extensions_View {
 		$is_demo = MainWP_Demo_Handle::is_demo_mode();
 		?>
 		<div id="mainwp-get-purchased-extensions-modal" class="ui first coupled large modal">
+		<i class="close icon"></i>
 			<div class="header"><?php esc_html_e( 'Install purchased extensions', 'mainwp' ); ?></div>
 			<div class="scrolling content"></div>
 			<div class="actions">
@@ -584,7 +588,7 @@ class MainWP_Extensions_View {
 						<input type="button" class="ui green button" id="mainwp-extensions-installnow" value="<?php esc_attr_e( 'Install Selected Extensions', 'mainwp' ); ?>">
 					<?php } ?>
 					</div>
-					<div class="right aligned column"><div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div></div>
+					<div class="right aligned column"></div>
 				</div>
 			</div>
 		</div>
@@ -607,7 +611,7 @@ class MainWP_Extensions_View {
 			<div class="content active">
 		<?php if ( empty( $mainwp_api_key ) ) { ?>
 		<div class="ui message info">
-			<?php printf( esc_html__( 'Not sure how to find your MainWP Main API Key? %1$sClick here to get it.%2$s', 'mainwp' ), '<a href="https://mainwp.com/my-account/my-api-keys/" target="_blank">', '</a>' ); ?>
+			<?php printf( esc_html__( 'Not sure how to find your MainWP Main API Key? %1$sClick here to get it.%2$s', 'mainwp' ), '<a href="https://mainwp.com/my-account/my-api-keys/" target="_blank">', '</a> <i class="external alternate icon"></i>' ); ?>
 		</div>
 		<?php } ?>
 		<div class="ui form" id="mainwp-extensions-api-fields">

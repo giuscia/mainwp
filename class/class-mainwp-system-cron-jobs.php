@@ -60,7 +60,7 @@ class MainWP_System_Cron_Jobs {
 		 */
 		do_action( 'mainwp_cronload_action' );
 
-		add_action( 'mainwp_cronstats_action', array( $this, 'cron_stats' ) );
+		add_action( 'mainwp_cronreconnect_action', array( $this, 'cron_reconnect' ) );
 		add_action( 'mainwp_cronbackups_action', array( $this, 'cron_backups' ) );
 		add_action( 'mainwp_cronbackups_continue_action', array( $this, 'cron_backups_continue' ) );
 		add_action( 'mainwp_cronupdatescheck_action', array( $this, 'cron_updates_check' ) );
@@ -82,11 +82,11 @@ class MainWP_System_Cron_Jobs {
 	public function init_cron() {
 
 		// Check wether or not to use MainWP Cron false|1.
-		$useWPCron = ( get_option( 'mainwp_wp_cron' ) === false ) || ( get_option( 'mainwp_wp_cron' ) === 1 );
+		$useWPCron = ( get_option( 'mainwp_wp_cron' ) === false ) || ( (int) get_option( 'mainwp_wp_cron' ) === 1 );
 
 		// Default Cron Jobs.
 		$jobs = array(
-			'mainwp_cronstats_action'        => 'hourly',
+			'mainwp_cronreconnect_action'    => 'hourly',
 			'mainwp_cronpingchilds_action'   => 'daily',
 			'mainwp_cronupdatescheck_action' => 'minutely',
 		);
@@ -155,7 +155,7 @@ class MainWP_System_Cron_Jobs {
 				wp_schedule_event( time(), $recurrence, $cron_hook );
 			}
 		} elseif ( ! $useWPCron ) {
-				wp_unschedule_event( $sched, $cron_hook );
+			wp_unschedule_event( $sched, $cron_hook );
 		}
 	}
 
@@ -268,7 +268,7 @@ class MainWP_System_Cron_Jobs {
 		}
 
 		$lasttimeScheStartAutoUpdate = (int) get_option( 'mainwp_updatescheck_start_last_schedule_timestamp', 0 );
-		$frequency_daily             = (int) get_option( 'mainwp_frequencyDailyUpdate', 1 );
+		$frequency_daily             = (int) get_option( 'mainwp_frequencyDailyUpdate', 2 );
 
 		if ( $frequency_daily <= 0 ) {
 			$frequency_daily = 1;
@@ -355,7 +355,7 @@ class MainWP_System_Cron_Jobs {
 
 		$local_timestamp = MainWP_Utility::get_timestamp();
 
-		$frequencyDailyUpdate = get_option( 'mainwp_frequencyDailyUpdate', 1 );
+		$frequencyDailyUpdate = (int) get_option( 'mainwp_frequencyDailyUpdate', 2 );
 		if ( $frequencyDailyUpdate <= 0 ) {
 			$frequencyDailyUpdate = 1;
 		}
@@ -409,7 +409,7 @@ class MainWP_System_Cron_Jobs {
 
 			MainWP_Utility::update_option( 'mainwp_updatescheck_ready_sendmail', '' ); // here to fix.
 
-			MainWP_Logger::instance()->log_update_check( 'CRON :: got to the daily digest mail part' );
+			MainWP_Logger::instance()->log_update_check( 'got to the daily digest mail part' );
 
 			$gen_email_settings = MainWP_Notification_Settings::get_general_email_settings( 'daily_digest' );
 			if ( empty( $gen_email_settings['disable'] ) ) {
@@ -465,7 +465,7 @@ class MainWP_System_Cron_Jobs {
 			if ( $hoursIntervalAutomaticUpdate > 0 ) {
 				$run_hours_interval = false;
 				if ( $lasttimeAutomaticUpdate && ( $lasttimeAutomaticUpdate + $hoursIntervalAutomaticUpdate * 3600 > $local_timestamp ) ) {
-					MainWP_Logger::instance()->log_update_check( 'CRON :: updates check :: already updated hours interval' );
+					MainWP_Logger::instance()->log_update_check( 'updates check :: already updated hours interval' );
 					return;
 				} else {
 					$run_hours_interval = true;
@@ -488,12 +488,12 @@ class MainWP_System_Cron_Jobs {
 					$run_datetime  = MainWP_Utility::format_timestamp( $run_timestamp );
 					$next_datetime = MainWP_Utility::format_timestamp( $next_time );
 					MainWP_Utility::update_option( 'mainwp_log_wait_lasttime', $time ); //phpcs:ignore -- local time.
-					MainWP_Logger::instance()->log_update_check( 'CRON :: updates check :: wait frequency today :: [frequencyDailyUpdate=' . $frequencyDailyUpdate . '] :: [run_timestamp=' . $run_datetime . ']' );
-					MainWP_Logger::instance()->log_update_check( 'CRON :: updates check :: [frequence=' . gmdate( "H:i:s", $frequence_period_in_seconds ) . '] :: [local_timestamp=' . $loc_datetime . '] >>> [next_time=' . $next_datetime . ']'); //phpcs:ignore -- local time.
+					MainWP_Logger::instance()->log_update_check( 'updates check :: wait frequency today :: [frequencyDailyUpdate=' . $frequencyDailyUpdate . '] :: [run_timestamp=' . $run_datetime . ']' );
+					MainWP_Logger::instance()->log_update_check( 'updates check :: [frequence=' . gmdate( "H:i:s", $frequence_period_in_seconds ) . '] :: [local_timestamp=' . $loc_datetime . '] >>> [next_time=' . $next_datetime . ']'); //phpcs:ignore -- local time.
 				}
 				return;
 			} else {
-				MainWP_Logger::instance()->log_update_check( 'CRON :: updates check :: running frequency now :: ' . $loc_datetime );
+				MainWP_Logger::instance()->log_update_check( 'updates check :: running frequency now :: ' . $loc_datetime );
 			}
 		}
 
@@ -538,8 +538,8 @@ class MainWP_System_Cron_Jobs {
 			}
 		}
 
-		MainWP_Logger::instance()->info( 'CRON :: updates check found' . count( $checkupdate_websites ) . ' websites' );
-		MainWP_Logger::instance()->log_update_check( 'CRON :: updates check found [' . count( $checkupdate_websites ) . ' websites] :: going to check [' . count( $websites ) . ' websites]' );
+		MainWP_Logger::instance()->info( 'updates check found' . count( $checkupdate_websites ) . ' websites' );
+		MainWP_Logger::instance()->log_update_check( 'updates check found [' . count( $checkupdate_websites ) . ' websites] :: going to check [' . count( $websites ) . ' websites]' );
 
 		$userid = null;
 		foreach ( $websites as $website ) {
@@ -572,14 +572,14 @@ class MainWP_System_Cron_Jobs {
 		if ( 0 === count( $checkupdate_websites ) ) {
 			$busyCounter = MainWP_DB::instance()->get_websites_count_where_dts_automatic_sync_smaller_then_start( $lasttimeStartAutomaticUpdate );
 			if ( 0 !== $busyCounter ) {
-				MainWP_Logger::instance()->log_update_check( 'CRON :: busy counter :: found ' . $busyCounter . ' websites' );
+				MainWP_Logger::instance()->log_update_check( 'busy counter :: found ' . $busyCounter . ' websites' );
 				$lastAutomaticUpdate = MainWP_DB::instance()->get_websites_last_automatic_sync();
 				if ( ( time() - $lastAutomaticUpdate ) < HOUR_IN_SECONDS ) {
-					MainWP_Logger::instance()->log_update_check( 'CRON :: last automatic update :: ' . $lastAutomaticUpdate );
+					MainWP_Logger::instance()->log_update_check( 'last automatic update :: ' . $lastAutomaticUpdate );
 				}
 			}
 
-			MainWP_Logger::instance()->log_update_check( 'CRON :: sites to check update empty' );
+			MainWP_Logger::instance()->log_update_check( 'sites to check update empty' );
 
 			if ( $updatecheck_running ) {
 				MainWP_Utility::update_option( 'mainwp_updatescheck_is_running', '' );
@@ -1036,7 +1036,7 @@ class MainWP_System_Cron_Jobs {
 				return;
 			}
 
-			if ( 1 !== $mainwpAutomaticDailyUpdate && 1 !== $plugin_automaticDailyUpdate && 1 !== $theme_automaticDailyUpdate ) {
+			if ( 1 !== (int) $mainwpAutomaticDailyUpdate && 1 !== (int) $plugin_automaticDailyUpdate && 1 !== (int) $theme_automaticDailyUpdate ) {
 				return;
 			}
 
@@ -1130,7 +1130,7 @@ class MainWP_System_Cron_Jobs {
 
 			/**  Auto updates part. */
 			if ( 1 === (int) $plugin_automaticDailyUpdate ) {
-				MainWP_Logger::instance()->log_update_check( 'CRON :: auto update plugins [plugins=' . print_r( $pluginsToUpdateNow, true ) . '] :: [days delay auto update=' . intval( $delay_autoupdate ) . ']' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions -- debug.
+				MainWP_Logger::instance()->log_update_check( 'auto update plugins [plugins=' . print_r( $pluginsToUpdateNow, true ) . '] :: [days delay auto update=' . intval( $delay_autoupdate ) . ']' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions -- debug.
 				foreach ( $pluginsToUpdateNow as $websiteId => $slugs ) {
 					if ( ( null !== $sitesCheckCompleted ) && ( false === $sitesCheckCompleted[ $websiteId ] ) ) {
 						continue;
@@ -1138,7 +1138,7 @@ class MainWP_System_Cron_Jobs {
 
 					try {
 
-						MainWP_Logger::instance()->log_update_check( 'CRON :: auto update plugins [websiteid=' . $websiteId . '] :: slugs :: ' . urldecode( implode( ',', $slugs ) ) );
+						MainWP_Logger::instance()->log_update_check( 'auto update plugins [websiteid=' . $websiteId . '] :: slugs :: ' . urldecode( implode( ',', $slugs ) ) );
 
 						/**
 						* Action: mainwp_before_plugin_theme_translation_update
@@ -1162,7 +1162,7 @@ class MainWP_System_Cron_Jobs {
 						if ( is_array( $information ) && isset( $information['upgrades'] ) && is_array( $information['upgrades'] ) ) {
 							$upgrades = print_r( $information['upgrades'], true ); // phpcs:ignore -- logging.
 						}
-						MainWP_Logger::instance()->log_update_check( 'CRON :: auto update plugins [upgrades result=' . $upgrades . ']' );
+						MainWP_Logger::instance()->log_update_check( 'auto update plugins [upgrades result=' . $upgrades . ']' );
 
 						/**
 						* Action: mainwp_after_plugin_theme_translation_update
@@ -1190,7 +1190,7 @@ class MainWP_System_Cron_Jobs {
 						continue;
 					}
 
-					MainWP_Logger::instance()->log_update_check( 'CRON :: auto update theme [websiteid=' . $websiteId . '] :: themes :: ' . implode( ',', $slugs ) );
+					MainWP_Logger::instance()->log_update_check( 'auto update theme [websiteid=' . $websiteId . '] :: themes :: ' . implode( ',', $slugs ) );
 
 					/**
 					* Action: mainwp_before_plugin_theme_translation_update
@@ -1237,7 +1237,7 @@ class MainWP_System_Cron_Jobs {
 					if ( ( null !== $sitesCheckCompleted ) && ( false === $sitesCheckCompleted[ $websiteId ] ) ) {
 						continue;
 					}
-					MainWP_Logger::instance()->log_update_check( 'CRON :: auto update core [websiteid=' . $websiteId . ']' );
+					MainWP_Logger::instance()->log_update_check( 'auto update core [websiteid=' . $websiteId . ']' );
 					try {
 						MainWP_Connect::fetch_url_authed( $allWebsites[ $websiteId ], 'upgrade' );
 					} catch ( \Exception $e ) {
@@ -1318,7 +1318,7 @@ class MainWP_System_Cron_Jobs {
 		}
 
 		if ( ! $sendMail ) {
-			MainWP_Logger::instance()->log_update_check( 'CRON :: updates check :: sendMail is false' );
+			MainWP_Logger::instance()->log_update_check( 'updates check :: sendMail is false' );
 			return false;
 		}
 
@@ -1458,7 +1458,7 @@ class MainWP_System_Cron_Jobs {
 	 * @uses  \MainWP\Dashboard\MainWP_Utility::ends_with()
 	 */
 	public function cron_ping_childs() {
-		MainWP_Logger::instance()->info( 'CRON :: ping childs' );
+		MainWP_Logger::instance()->info( 'ping childs' );
 
 		$lastPing = get_option( 'mainwp_cron_last_ping' );
 		if ( false !== $lastPing && ( time() - $lastPing ) < ( 60 * 60 * 23 ) ) {
@@ -1500,7 +1500,7 @@ class MainWP_System_Cron_Jobs {
 			return;
 		}
 
-		MainWP_Logger::instance()->info( 'CRON :: backups continue' );
+		MainWP_Logger::instance()->info( 'backups continue' );
 
 		ignore_user_abort( true );
 		MainWP_System_Utility::set_time_limit( 0 );
@@ -1515,14 +1515,14 @@ class MainWP_System_Cron_Jobs {
 
 		$tasks = MainWP_DB_Backup::instance()->get_backup_tasks_to_complete();
 
-		MainWP_Logger::instance()->debug( 'CRON :: backups continue :: Found ' . count( $tasks ) . ' to continue.' );
+		MainWP_Logger::instance()->debug( 'backups continue :: Found ' . count( $tasks ) . ' to continue.' );
 
 		if ( empty( $tasks ) ) {
 			return;
 		}
 
 		foreach ( $tasks as $task ) {
-			MainWP_Logger::instance()->debug( 'CRON :: backups continue ::    Task: ' . $task->name );
+			MainWP_Logger::instance()->debug( 'backups continue ::    Task: ' . $task->name );
 		}
 
 		foreach ( $tasks as $task ) {
@@ -1554,7 +1554,7 @@ class MainWP_System_Cron_Jobs {
 			return;
 		}
 
-		MainWP_Logger::instance()->info( 'CRON :: backups' );
+		MainWP_Logger::instance()->info( 'backups' );
 
 		ignore_user_abort( true );
 		MainWP_System_Utility::set_time_limit( 0 );
@@ -1581,10 +1581,10 @@ class MainWP_System_Cron_Jobs {
 			$allTasks = array_merge( $allTasks, $monthlyTasks );
 		}
 
-		MainWP_Logger::instance()->debug( 'CRON :: backups :: Found ' . count( $allTasks ) . ' to start.' );
+		MainWP_Logger::instance()->debug( 'backups :: Found ' . count( $allTasks ) . ' to start.' );
 
 		foreach ( $allTasks as $task ) {
-			MainWP_Logger::instance()->debug( 'CRON :: backups ::    Task: ' . $task->name );
+			MainWP_Logger::instance()->debug( 'backups ::    Task: ' . $task->name );
 		}
 
 		foreach ( $allTasks as $task ) {
@@ -1611,7 +1611,7 @@ class MainWP_System_Cron_Jobs {
 	}
 
 	/**
-	 * Method cron_stats()
+	 * Method cron_reconnect()
 	 *
 	 * Grab MainWP Cron Job Statistics.
 	 *
@@ -1626,8 +1626,8 @@ class MainWP_System_Cron_Jobs {
 	 * @uses \MainWP\Dashboard\MainWP_Manage_Sites_View::m_reconnect_site()
 	 * @uses  \MainWP\Dashboard\MainWP_Utility::update_option()
 	 */
-	public function cron_stats() {
-		MainWP_Logger::instance()->info( 'CRON :: stats' );
+	public function cron_reconnect() {
+		MainWP_Logger::instance()->info( 'stats' );
 
 		MainWP_Utility::update_option( 'mainwp_cron_last_stats', time() );
 
@@ -1709,7 +1709,7 @@ class MainWP_System_Cron_Jobs {
 		}
 
 		if ( 'yes' !== $running ) {
-			MainWP_Logger::instance()->info( 'CRON :: check sites status :: starting.' );
+			MainWP_Logger::instance()->info( 'check sites status :: starting.' );
 			MainWP_Utility::update_option( 'mainwp_cron_checksites_running', 'yes' );
 			if ( MainWP_Monitoring_Handler::check_to_purge_records() ) {
 				return; // to run next time.
@@ -1722,7 +1722,7 @@ class MainWP_System_Cron_Jobs {
 		if ( empty( $websites ) ) {
 			$plain_text = get_option( 'mainwp_daily_digest_plain_text', false );
 			$this->start_notification_uptime_status( $plain_text );
-			MainWP_Logger::instance()->info( 'CRON :: check sites status :: finished.' );
+			MainWP_Logger::instance()->info( 'check sites status :: finished.' );
 			MainWP_Utility::update_option( 'mainwp_cron_checksites_last_timestamp', time() );
 			MainWP_Utility::update_option( 'mainwp_cron_checksites_running', false );
 			return;
@@ -1752,7 +1752,7 @@ class MainWP_System_Cron_Jobs {
 	public function start_notification_uptime_status( $plain_text ) {
 
 		$offlineSites = MainWP_DB_Common::instance()->get_websites_offline_status_to_send_notice();
-		MainWP_Logger::instance()->info( 'CRON :: check sites status :: notice site http :: found ' . ( $offlineSites ? count( $offlineSites ) : 0 ) );
+		MainWP_Logger::instance()->info( 'check sites status :: notice site http :: found ' . ( $offlineSites ? count( $offlineSites ) : 0 ) );
 
 		if ( empty( $offlineSites ) ) {
 			return false;
@@ -1804,10 +1804,10 @@ class MainWP_System_Cron_Jobs {
 			return;
 		}
 
-		MainWP_Logger::instance()->info( 'CRON :: check sites health :: starting.' );
+		MainWP_Logger::instance()->info( 'check sites health :: starting.' );
 		$plain_text = get_option( 'mainwp_daily_digest_plain_text', false );
 		$this->start_notification_sites_health( $plain_text );
-		MainWP_Logger::instance()->info( 'CRON :: check sites health :: finished.' );
+		MainWP_Logger::instance()->info( 'check sites health :: finished.' );
 		MainWP_Utility::update_option( 'mainwp_cron_checksiteshealth_last_timestamp', time() );
 	}
 
@@ -1831,7 +1831,7 @@ class MainWP_System_Cron_Jobs {
 
 		$globalThreshold = get_option( 'mainwp_sitehealthThreshold', 80 );
 		$healthSites     = MainWP_DB::instance()->get_websites_to_notice_health_threshold( $globalThreshold );
-		MainWP_Logger::instance()->info( 'CRON :: check sites health :: notice site health :: found ' . ( $healthSites ? count( $healthSites ) : 0 ) );
+		MainWP_Logger::instance()->info( 'check sites health :: notice site health :: found ' . ( $healthSites ? count( $healthSites ) : 0 ) );
 
 		if ( empty( $healthSites ) ) {
 			return false;

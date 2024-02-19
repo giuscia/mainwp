@@ -215,16 +215,20 @@ class MainWP_Server_Information_Handler {
 		}
 		$errors = array();
 
-		if ( function_exists( 'openssl_pkey_new' ) ) {
-			$res = openssl_pkey_new( $conf );
-			openssl_pkey_export( $res, $privkey, null, $conf );
+		$general_verify_con = (int) get_option( 'mainwp_verify_connection_method', 0 );
 
-			$error = '';
-			while ( ( $errorRow = openssl_error_string() ) !== false ) {
-				$error = $errorRow . "\n" . $error;
-			}
-			if ( ! empty( $error ) ) {
-				$errors[] = $error;
+		if ( 2 !== $general_verify_con ) {
+			if ( function_exists( 'openssl_pkey_new' ) ) {
+				$res = openssl_pkey_new( $conf );
+				openssl_pkey_export( $res, $privkey, null, $conf );
+
+				$error = '';
+				while ( ( $errorRow = openssl_error_string() ) !== false ) {
+					$error = $errorRow . "\n" . $error;
+				}
+				if ( ! empty( $error ) ) {
+					$errors[] = $error;
+				}
 			}
 		}
 
@@ -238,9 +242,11 @@ class MainWP_Server_Information_Handler {
 	 */
 	public static function get_openssl_working_status() {
 
-		$ok = false;
-
-		if ( function_exists( 'openssl_verify' ) && function_exists( 'openssl_pkey_new' ) ) {
+		$ok                 = false;
+		$general_verify_con = (int) get_option( 'mainwp_verify_connection_method', 0 );
+		if ( 2 === $general_verify_con ) {
+			$ok = 1;
+		} elseif ( function_exists( 'openssl_verify' ) && function_exists( 'openssl_pkey_new' ) ) {
 
 			$conf = array(
 				'private_key_bits' => 2048,
@@ -847,7 +853,7 @@ class MainWP_Server_Information_Handler {
 		$mainwp_options = array(
 			'mainwp_number_of_child_sites'           => esc_html__( 'Number of connected sites', 'mainwp' ),
 			'mainwp_wp_cron'                         => esc_html__( 'Use WP Cron', 'mainwp' ),
-			'mainwp_optimize'                        => esc_html__( 'Optimize for shared hosting or big networks', 'mainwp' ),
+			'mainwp_optimize'                        => esc_html__( 'Optimize data loading', 'mainwp' ),
 			'mainwp_automaticDailyUpdate'            => esc_html__( 'WP Core advanced automatic updates enabled', 'mainwp' ),
 			'mainwp_pluginAutomaticDailyUpdate'      => esc_html__( 'Plugin advanced automatic updates enabled', 'mainwp' ),
 			'mainwp_themeAutomaticDailyUpdate'       => esc_html__( 'Theme advanced automatic updates enabled', 'mainwp' ),

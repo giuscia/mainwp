@@ -35,20 +35,9 @@
 	}
 }
 
-@media only screen and ( min-width: 1140px ) and ( max-width: 1449px ) {
-	.mainwp-sync-button-icon {
-		display: inline-block !important;
-		margin: 0px !important;
-	}
-	.mainwp-sync-button-text  {
-		display: none !important;
-	}
-
-	#mainwp-add-new-buttons .ui.icon.button {
-		display: inline-block !important;
-	}
-	#mainwp-add-new-buttons .ui.button:not(.icon) {
-		display: none !important;
+@media only screen and ( min-width: 1360px ) and ( max-width: 1645px ) {
+	#mainwp-update-everything-button {
+		font-size: 14px;
 	}
 }
 
@@ -302,14 +291,6 @@
 
 	.mainwp-manage-wpsites-table {
 		white-space: normal !important;
-	}
-
-	.mainwp-manage-wpsites-table tbody tr td.mainwp-site-cell,
-	.mainwp-manage-wpsites-table tbody tr td.mainwp-url-cell {
-		white-space: nowrap;
-	  overflow: hidden;
-	  text-overflow: ellipsis;
-	  max-width: 185px;
 	}
 
 	/*--- Groups ---*/

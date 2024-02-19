@@ -283,7 +283,7 @@ class MainWP_System_Handler {
 					}
 				}
 			}
-			MainWP_Utility::update_option( 'mainwp_use_favicon', ( ! isset( $_POST['mainwp_use_favicon'] ) ? 0 : 1 ) );
+			MainWP_Utility::update_option( 'mainwp_use_favicon', 1 );
 			MainWP_Utility::update_option( 'mainwp_optimize', ( ! isset( $_POST['mainwp_optimize'] ) ? 0 : 1 ) );
 			$user = wp_get_current_user();
 			if ( $user ) {

@@ -90,7 +90,7 @@ class MainWP_Notification {
 		$email = trim( $email, ',' );
 
 		if ( ! empty( $email ) ) {
-			MainWP_Logger::instance()->debug( 'CRON :: http check :: send mail ::' );
+			MainWP_Logger::instance()->debug( 'http check :: send mail ::' );
 			self::send_wp_mail(
 				$email,
 				$subject,
@@ -183,9 +183,9 @@ class MainWP_Notification {
 			$content_type
 		);
 		if ( $sent ) {
-			MainWP_Logger::instance()->log_update_check( 'CRON :: daily digest :: send mail :: successful :: ' . $email );
+			MainWP_Logger::instance()->log_update_check( 'daily digest :: send mail :: successful :: ' . $email );
 		} else {
-			MainWP_Logger::instance()->log_update_check( 'CRON :: daily digest :: send mail :: failed :: ' . $email );
+			MainWP_Logger::instance()->log_update_check( 'daily digest :: send mail :: failed :: ' . $email );
 		}
 		return true;
 	}
@@ -212,7 +212,7 @@ class MainWP_Notification {
 		}
 
 		if ( ! empty( $emails ) && ! empty( $mail_content ) ) {
-			MainWP_Logger::instance()->debug( 'CRON :: sites status :: send mail ::' );
+			MainWP_Logger::instance()->debug( 'sites status :: send mail ::' );
 			self::send_wp_mail(
 				$emails,
 				$subject,
@@ -243,7 +243,7 @@ class MainWP_Notification {
 		}
 
 		if ( ! empty( $email ) && ! empty( $mail_content ) ) {
-			MainWP_Logger::instance()->debug( 'CRON :: sites health :: send mail ::' );
+			MainWP_Logger::instance()->debug( 'sites health :: send mail ::' );
 			self::send_wp_mail(
 				$email,
 				$subject,

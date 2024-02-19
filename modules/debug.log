@@ -1,0 +1,196 @@
+[15-Feb-2024 18:28:08 UTC] =data======Array
+(
+    [stats_data] => Array
+        (
+            [site] => Array
+                (
+                    [sites] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 190
+                                    [dura_time] => 2015.5054
+                                )
+
+                            [reconnect] => Array
+                                (
+                                    [count] => 61
+                                    [dura_time] => 805.5324
+                                )
+
+                            [sync] => Array
+                                (
+                                    [count] => 117
+                                    [dura_time] => 1187.8276
+                                )
+
+                            [updated] => Array
+                                (
+                                    [count] => 12
+                                    [dura_time] => 22.1454
+                                )
+
+                        )
+
+                )
+
+            [installer] => Array
+                (
+                    [plugin] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 18
+                                    [dura_time] => 137.8509
+                                )
+
+                            [install] => Array
+                                (
+                                    [count] => 11
+                                    [dura_time] => 57.0658
+                                )
+
+                            [updated] => Array
+                                (
+                                    [count] => 7
+                                    [dura_time] => 80.7851
+                                )
+
+                        )
+
+                    [theme] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 2
+                                    [dura_time] => 37.4925
+                                )
+
+                            [updated] => Array
+                                (
+                                    [count] => 2
+                                    [dura_time] => 37.4925
+                                )
+
+                        )
+
+                )
+
+            [posts] => Array
+                (
+                    [post] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 2
+                                    [dura_time] => 5.7607
+                                )
+
+                            [created] => Array
+                                (
+                                    [count] => 2
+                                    [dura_time] => 5.7607
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [stats_prev_data] => Array
+        (
+            [site] => Array
+                (
+                    [sites] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 262
+                                    [dura_time] => 2832.2005
+                                )
+
+                            [updated] => Array
+                                (
+                                    [count] => 25
+                                    [dura_time] => 44.6799
+                                )
+
+                            [sync] => Array
+                                (
+                                    [count] => 209
+                                    [dura_time] => 2299.066
+                                )
+
+                            [reconnect] => Array
+                                (
+                                    [count] => 28
+                                    [dura_time] => 488.4546
+                                )
+
+                        )
+
+                )
+
+            [installer] => Array
+                (
+                    [plugin] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 273
+                                    [dura_time] => 2613.3253
+                                )
+
+                            [install] => Array
+                                (
+                                    [count] => 273
+                                    [dura_time] => 2613.3253
+                                )
+
+                        )
+
+                    [theme] => Array
+                        (
+                            [total_events] => Array
+                                (
+                                    [count] => 84
+                                    [dura_time] => 983.0549
+                                )
+
+                            [install] => Array
+                                (
+                                    [count] => 84
+                                    [dura_time] => 983.0549
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [insights_filters] => Array
+        (
+            [filter_ranges] => custom
+            [filter_groups_ids] => 
+            [filter_client_ids] => 
+            [filter_user_ids] => 
+            [filter_dtsstart] => 2024-02-01
+            [filter_dtsstop] => 2024-02-15
+            [array_clients_ids] => Array
+                (
+                )
+
+            [array_groups_ids] => Array
+                (
+                )
+
+            [array_users_ids] => Array
+                (
+                )
+
+        )
+
+)
+

@@ -1,0 +1,26 @@
+[15-Feb-2024 16:56:39 UTC] Array
+(
+    [overview] => 1
+    [recent_posts] => 1
+    [recent_pages] => 1
+    [plugins] => 1
+    [themes] => 1
+    [connection_status] => 1
+    [security_issues] => 1
+    [notes] => 1
+    [clients] => 1
+    [child_site_info] => 1
+    [client_info] => 1
+    [non_mainwp_changes] => 1
+    [advanced-aum-widget] => 1
+    [advanced-domain-monitor-widget] => 1
+    [advanced-google-widget] => 1
+    [advanced-ithemes_security] => 1
+    [advanced-jetpack-protect-widget] => 1
+    [advanced-lighthouse-widget] => 1
+    [advanced-matomo] => 1
+    [advanced-ssl-monitor-widget] => 1
+    [advanced-time-tracker-tasks] => 1
+    [advanced-cost-tracker-widget] => 0
+)
+

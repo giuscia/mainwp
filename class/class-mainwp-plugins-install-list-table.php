@@ -481,7 +481,7 @@ class MainWP_Plugins_Install_List_Table extends \WP_List_Table {
 			$last_updated_timestamp = strtotime( $plugin['last_updated'] );
 			?>
 
-			<div class="card plugin-card-<?php echo sanitize_html_class( $plugin['slug'] ); ?>">
+			<div class="card plugin-card-<?php echo sanitize_html_class( $plugin['slug'] ); ?>" plugin-slug="<?php echo esc_attr( $plugin['slug'] ); ?>" plugin-name="<?php echo esc_attr( $plugin['name'] ); ?>">
 			<?php
 			/**
 			 * Action: mainwp_install_plugin_card_top

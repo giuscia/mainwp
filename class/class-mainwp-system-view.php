@@ -118,7 +118,7 @@ class MainWP_System_View {
 		mainwp_add_translation( $mainwpTranslations, 'Please enter a valid URL for your site', esc_html__( 'Please enter a valid URL for your site', 'mainwp' ) );
 		mainwp_add_translation( $mainwpTranslations, 'Please enter a username for the administrator', esc_html__( 'Please enter a username for the administrator', 'mainwp' ) );
 		mainwp_add_translation( $mainwpTranslations, 'Adding the site to MainWP', esc_html__( 'Adding the site to MainWP', 'mainwp' ) );
-		mainwp_add_translation( $mainwpTranslations, 'No MainWP Child plugin detected, first install and activate the plugin and add your site to MainWP afterwards. Click <a href="%1" target="_blank">here</a> to install <a href="%2" target="_blank">MainWP</a> plugin (do not forget to activate it after installation).', esc_html__( 'No MainWP Child plugin detected, first install and activate the plugin and add your site to MainWP afterwards. Click <a href="%1" target="_blank">here</a> to install <a href="%2" target="_blank">MainWP</a> plugin (do not forget to activate it after installation).', 'mainwp' ) );
+		mainwp_add_translation( $mainwpTranslations, 'No MainWP Child plugin detected, first install and activate the plugin and add your site to MainWP afterwards. Click <a href="%1" target="_blank">here</a> to install <a href="%2" target="_blank">MainWP</a> plugin (do not forget to activate it after installation).', esc_html__( 'No MainWP Child plugin detected, first install and activate the plugin and add your site to MainWP afterwards. Click <a href="%1" target="_blank">here</a> to install <a href="%2" target="_blank">MainWP</a> <i class="external alternate icon"></i> plugin (do not forget to activate it after installation).', 'mainwp' ) );
 		mainwp_add_translation( $mainwpTranslations, 'Testing the connection', esc_html__( 'Testing the connection', 'mainwp' ) );
 		mainwp_add_translation( $mainwpTranslations, 'Are you sure you want to delete this site?', esc_html__( 'Are you sure you want to delete this site?', 'mainwp' ) );
 		mainwp_add_translation( $mainwpTranslations, 'Removing and deactivating the MainWP Child plugin..', esc_html__( 'Removing and deactivating the MainWP Child plugin..', 'mainwp' ) );
@@ -278,7 +278,7 @@ class MainWP_System_View {
 			?>
 			<div class="ui icon message yellow" style="margin-bottom: 0; border-radius: 0;">
 				<i class="exclamation circle icon"></i>
-				<strong><?php echo esc_html__( 'Important Notice: ', 'mainwp' ); ?></strong>&nbsp;<?php printf( esc_html__( 'MainWP Version 4 is a major upgrade from MainWP Version 3. Please, read this&nbsp; %1$supdating FAQ%2$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/faq-on-upgrading-from-mainwp-version-3-to-mainwp-version-4/" target="_blank">', '</a>' ); ?>
+				<strong><?php echo esc_html__( 'Important Notice: ', 'mainwp' ); ?></strong>&nbsp;<?php printf( esc_html__( 'MainWP Version 4 is a major upgrade from MainWP Version 3. Please, read this&nbsp; %1$supdating FAQ%2$s.', 'mainwp' ), '<a href="https://kb.mainwp.com/docs/faq-on-upgrading-from-mainwp-version-3-to-mainwp-version-4/" target="_blank">', '</a> <i class="external alternate icon"></i>' ); ?>
 				<i class="close icon mainwp-notice-dismiss" notice-id="upgrade_4"></i>
 			</div>
 			<?php
@@ -805,7 +805,13 @@ class MainWP_System_View {
 					$class_string .= ' mainwp-individual-client-overview ';
 				}
 			}
+			if ( isset( $_GET['page'] ) && 'CostTrackerAdd' !== $_GET['page'] ) {
+				if ( ( isset( $_GET['id'] ) &&  ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) &&  ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) &&  ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) &&  ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) &&  ! empty( $_GET['scanid'] ) ) ) {
+					$class_string .= ' mainwp-individual-site-view ';
+				}
+			}
 			// phpcs:enable
+			$class_string = apply_filters( 'mainwp_page_admin_body_class', $class_string );
 		}
 		return $class_string;
 	}
@@ -851,7 +857,8 @@ class MainWP_System_View {
 		do_action( 'mainwp_admin_footer' );
 		MainWP_UI::render_select_mainwp_themes_modal();
 		?>
-		<div class="ui longer modal" id="mainwp-sync-sites-modal" current-wpid="<?php echo intval( $current_wpid ); ?>">
+		<div class="ui modal" id="mainwp-sync-sites-modal" current-wpid="<?php echo intval( $current_wpid ); ?>">
+			<i class="mainwp-modal-close close icon"></i>
 			<div class="header"><?php esc_html_e( 'Data Synchronization', 'mainwp' ); ?></div>
 			<div class="ui green progress mainwp-modal-progress">
 				<div class="bar"><div class="progress"></div></div>
@@ -899,18 +906,15 @@ class MainWP_System_View {
 					?>
 				</div>
 			</div>
-			<div class="actions mainwp-modal-actions">
-				<div class="mainwp-modal-close ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
-			</div>
 		</div>
 		<input type="hidden" id="sync_selected_site_ids" value="" />		
 		<div class="ui tiny modal" id="mainwp-modal-confirm-select">
+		<i class="close icon"></i>
 			<div class="header"><?php esc_html_e( 'Confirmation', 'mainwp' ); ?></div>
 			<div class="content">
 				<div class="content-massage"></div>
 			</div>
 			<div class="actions">
-				<div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -925,6 +929,7 @@ class MainWP_System_View {
 	public static function render_comfirm_modal() {
 		?>
 		<div class="ui tiny modal" id="mainwp-modal-confirm">
+		<i class="close icon"></i>
 			<div class="header"><?php esc_html_e( 'Confirmation', 'mainwp' ); ?></div>
 			<div class="content">
 				<div class="content-massage"></div>
@@ -940,10 +945,9 @@ class MainWP_System_View {
 			<div class="actions">
 				<div class="ui two columns grid">
 					<div class="ui left aligned column">
-						<div class="ui green positive button"><?php esc_html_e( 'Yes, proceed!', 'mainwp' ); ?></div>
 					</div>
 					<div class="ui right aligned column">
-				<div class="ui cancel button"><?php esc_html_e( 'Cancel', 'mainwp' ); ?></div>
+					<div class="ui green positive button"><?php esc_html_e( 'Yes, proceed!', 'mainwp' ); ?></div>
 					</div>
 				</div>
 			</div>
@@ -1088,6 +1092,7 @@ class MainWP_System_View {
 
 		?>
 		<div class="ui modal" id="mainwp-install-check-modal" noti-slug="<?php echo esc_html( $check_slug ); ?>">
+		<i class="mainwp-modal-close close icon"></i>
 			<div class="header"><?php esc_html_e( 'Plugin Install Check', 'mainwp' ); ?></div>
 			<div class="scrolling content mainwp-modal-content">
 				<div class="ui message" id="mainwp-message-zone-install" style="display:none;"></div>
@@ -1113,10 +1118,10 @@ class MainWP_System_View {
 			<div class="actions mainwp-modal-actions">
 				<div class="ui two columns grid">
 					<div class="left aligned column">
-						<input type="button" class="ui green button" id="mainwp-install-check-btn" value="<?php esc_html_e( 'Install Plugin', 'mainwp' ); ?>">	
+						
 					</div>
 					<div class="ui right aligned column">
-						<div class="mainwp-modal-close ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
+						<input type="button" class="ui green button" id="mainwp-install-check-btn" value="<?php esc_html_e( 'Install Plugin', 'mainwp' ); ?>">	
 					</div>
 				</div>
 

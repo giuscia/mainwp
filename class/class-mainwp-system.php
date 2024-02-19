@@ -27,7 +27,7 @@ class MainWP_System {
 	 *
 	 * @var string Current plugin version.
 	 */
-	public static $version = '4.6-RC1';
+	public static $version = '5.0-RC2';
 
 	/**
 	 * Private static variable to hold the single instance of the class.
@@ -56,7 +56,7 @@ class MainWP_System {
 	 *
 	 * @var string The plugin current update version.
 	 */
-	private $check_ver_update = '0.0.1';
+	private $check_ver_update = '0.0.4';
 
 	/**
 	 * Private variable to hold the plugin slug (mainwp/mainwp.php)
@@ -206,6 +206,7 @@ class MainWP_System {
 		new MainWP_Bulk_Post();
 
 		add_action( 'admin_init', array( &$this, 'admin_init' ), 20 );
+		add_action( 'admin_init', array( $this, 'hook_admin_update_check' ) );
 		add_action( 'after_setup_theme', array( &$this, 'after_setup_theme' ) );
 
 		add_action( 'init', array( &$this, 'parse_init' ) );
@@ -254,6 +255,7 @@ class MainWP_System {
 		MainWP_Updates_Overview::init();
 		MainWP_Client::init();
 		MainWP_Rest_Api_Page::init();
+		MainWP_Non_MainWP_Actions::instance();
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			MainWP_WP_CLI_Command::init();
@@ -317,7 +319,6 @@ class MainWP_System {
 				'mainwp_wpcreport_extension',
 				'mainwp_daily_digest_plain_text',
 				'mainwp_hide_update_everything',
-				'mainwp_number_clients_overview_columns',
 				'mainwp_disable_update_confirmations',
 				'mainwp_settings_show_widgets',
 				'mainwp_clients_show_widgets',
@@ -340,6 +341,8 @@ class MainWP_System {
 				'mainwp_log_wait_lasttime',
 				'mainwp_updatescheck_start_last_schedule_timestamp',
 			);
+
+			$options = apply_filters( 'mainwp_init_load_all_options', $options );
 
 			$query = "SELECT option_name, option_value FROM $wpdb->options WHERE option_name in (";
 			foreach ( $options as $option ) {
@@ -451,14 +454,14 @@ class MainWP_System {
 	}
 
 	/**
-	 * Method mainwp_cronstats_action()
+	 * Method mainwp_cronreconnect_action()
 	 *
 	 * Run cron stats action.
 	 *
-	 * @uses \MainWP\Dashboard\MainWP_System_Cron_Jobs::cron_stats()
+	 * @uses \MainWP\Dashboard\MainWP_System_Cron_Jobs::cron_reconnect()
 	 */
-	public function mainwp_cronstats_action() {
-		MainWP_System_Cron_Jobs::instance()->cron_stats();
+	public function mainwp_cronreconnect_action() {
+		MainWP_System_Cron_Jobs::instance()->cron_reconnect();
 	}
 
 	/**
@@ -507,6 +510,22 @@ class MainWP_System {
 			return true;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Method is_mainwp_site_page()
+	 *
+	 * Checks if the current page is under the site mode.
+	 *
+	 * @return boolean ture|false.
+	 */
+	public static function is_mainwp_site_page() {
+		if ( isset( $_GET['page'] ) && 'CostTrackerAdd' !== $_GET['page'] ) {
+			if ( ( isset( $_GET['id'] ) &&  ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) &&  ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) &&  ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) &&  ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) &&  ! empty( $_GET['scanid'] ) ) ) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -566,7 +585,7 @@ class MainWP_System {
 					return true;
 				}
 
-				if ( defined( 'MAINWP_REST_API' ) && MAINWP_REST_API ) {
+				if ( defined( 'MAINWP_REST_API_DOING' ) && MAINWP_REST_API_DOING ) {
 					return true;
 				}
 
@@ -644,6 +663,33 @@ class MainWP_System {
 	 */
 	public function after_setup_theme() {
 		add_theme_support( 'post-thumbnails' );
+	}
+
+
+	/**
+	 * Method hook_admin_update_check()
+	 */
+	public function hook_admin_update_check() {
+		$current_ver = $this->check_ver_update;
+		$saved_ver   = get_option( 'mainwp_update_check_version', false );
+
+		if ( false === $saved_ver ) {
+			return;
+		}
+
+		if ( version_compare( $saved_ver, $current_ver, '=' ) ) {
+			return;
+		}
+
+		if ( version_compare( $saved_ver, '0.0.4', '<' ) ) {
+			$sched = wp_next_scheduled( 'mainwp_cronstats_action' );
+			if ( ! empty( $sched ) ) {
+				wp_unschedule_event( $sched, 'mainwp_cronstats_action' );
+			}
+			global $wpdb;
+			$wpdb->query( 'DELETE FROM ' . $wpdb->usermeta . ' WHERE meta_key = "mainwp_widgets_sorted_toplevel_page_mainwp_tab" OR meta_key="mainwp_settings_show_widgets"' );//phpcs:ignore -- safe.
+		}
+		MainWP_Utility::update_option( 'mainwp_update_check_version', $current_ver );
 	}
 
 	/**
@@ -762,6 +808,8 @@ class MainWP_System {
 		} elseif ( isset( $_GET['page'] ) && 0 === strpos( wp_unslash( $_GET['page'] ), 'ManageSites' ) ) { //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- individual page.
 			$load_gridster = true;
 		}
+
+		$load_gridster = apply_filters( 'mainwp_enqueue_script_gridster', $load_gridster );
 
 		if ( $load_gridster ) {
 			wp_enqueue_script( 'gridster', MAINWP_PLUGIN_URL . 'assets/js/gridster/jquery.gridster.min.js', array(), $this->current_version, true );
@@ -1067,6 +1115,7 @@ class MainWP_System {
 
 		?>
 		<div class="ui large modal" id="mainwp-response-data-modal">
+		<i class="close icon"></i>
 			<div class="header"><?php esc_html_e( 'Child Site Response', 'mainwp' ); ?></div>
 			<div class="content">
 				<div class="ui info message"><?php esc_html_e( 'To see the response in a more readable way, you can copy it and paste it into some HTML render tool, such as Codepen.io.', 'mainwp' ); ?>
@@ -1075,7 +1124,6 @@ class MainWP_System {
 			<div class="scrolling content content-response"></div>
 			<div class="actions">
 				<button class="ui green button mainwp-response-copy-button"><?php esc_html_e( 'Copy Response', 'mainwp' ); ?></button>
-				<div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
 			</div>
 		</div>
 		<div id="mainwp-response-data-container" resp-data=""></div>
@@ -1102,8 +1150,8 @@ class MainWP_System {
 				} elseif ( 'UpdatesManage' === $_GET['page'] || 'mainwp_tab' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					$staging_enabled = is_plugin_active( 'mainwp-staging-extension/mainwp-staging-extension.php' ) ? true : false;
 					if ( $staging_enabled ) {
-						$staging_view = 'staging' === get_user_option( 'mainwp_staging_options_updates_view' ) ? true : false;
-						if ( $staging_view ) {
+						$staging_view = MainWP_System_Utility::get_staging_options_sites_view_for_current_users();
+						if ( 'staging' === $staging_view ) {
 							$is_staging = 'yes';
 						}
 					}

@@ -13,7 +13,7 @@ use MainWP\Dashboard\MainWP_Utility;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class - Log_Admin
+ * Class - Log_Settings
  */
 class Log_Settings {
 
@@ -30,6 +30,15 @@ class Log_Settings {
 	 * @var options
 	 */
 	public $options;
+
+	/**
+	 * Current page.
+	 *
+	 * @static
+	 * @var string $page Current page.
+	 */
+	public static $page;
+
 
 	/**
 	 * Class constructor.
@@ -50,6 +59,7 @@ class Log_Settings {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_filter( 'mainwp_getsubpages_settings', array( $this, 'add_subpage_menu_settings' ) );
+		add_filter( 'mainwp_init_primary_menu_items', array( $this, 'hook_init_primary_menu_items' ), 10, 2 );
 	}
 
 
@@ -69,7 +79,7 @@ class Log_Settings {
 	/**
 	 * Init sub menu logs settings.
 	 *
-	 * @param array $subpages sub pages.
+	 * @param array $subpages Sub pages.
 	 *
 	 * @action init
 	 */
@@ -81,6 +91,69 @@ class Log_Settings {
 			'class'    => '',
 		);
 		return $subpages;
+	}
+
+	/**
+	 * Init sub menu logs settings.
+	 *
+	 * @param array  $items Sub menu items.
+	 * @param string $which_menu first|second.
+	 *
+	 * @return array $tmp_items Menu items.
+	 */
+	public function hook_init_primary_menu_items( $items, $which_menu ) {
+		if ( ! is_array( $items ) || 'first' !== $which_menu ) {
+			return $items;
+		}
+		$items[] = array(
+			'slug'               => 'InsightsOverview',
+			'menu_level'         => 2,
+			'menu_rights'        => array(
+				'dashboard' => array(
+					'access_insights_dashboard',
+				),
+			),
+			'init_menu_callback' => array( self::class, 'init_menu' ),
+			'leftbar_order'      => 2.9,
+		);
+		return $items;
+	}
+
+	/**
+	 * Method init_menu()
+	 *
+	 * Add Insights Overview sub menu "Insights".
+	 */
+	public static function init_menu() {
+
+		self::$page = add_submenu_page(
+			'mainwp_tab',
+			esc_html__( 'Insights', 'mainwp' ),
+			'<span id="mainwp-insights">' . esc_html__( 'Insights', 'mainwp' ) . '</span>',
+			'read',
+			'InsightsOverview',
+			array(
+				Log_Insights_Page::instance(),
+				'render_insights_overview',
+			)
+		);
+
+		Log_Insights_Page::init_left_menu();
+
+		if ( isset( $_GET['page'] ) && 'InsightsOverview' === $_GET['page'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			add_filter( 'mainwp_enqueue_script_gridster', '__return_true' );
+		}
+
+		add_action( 'load-' . self::$page, array( self::class, 'on_load_page' ) );
+	}
+
+	/**
+	 * Method on_load_page()
+	 *
+	 * Run on page load.
+	 */
+	public static function on_load_page() {
+		Log_Insights_Page::instance()->on_load_page( self::$page );
 	}
 
 	/**

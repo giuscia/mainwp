@@ -95,106 +95,202 @@ class MainWP_Menu {
 	public static function init_mainwp_menus() { // phpcs:ignore -- complex method. Current complexity is the only way to achieve desired results, pull request solutions appreciated.
 		if ( MainWP_System_Utility::is_admin() ) {
 
+			$menus_items = array();
+
 			// Manage Sites.
-			if ( ! self::is_disable_menu_item( 2, 'managesites' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'add_sites' ) || mainwp_current_user_have_right( 'dashboard', 'edit_sites' ) || mainwp_current_user_have_right( 'dashboard', 'delete_sites' ) || mainwp_current_user_have_right( 'dashboard', 'access_individual_dashboard' ) || mainwp_current_user_have_right( 'dashboard', 'access_wpadmin_on_child_sites' ) || mainwp_current_user_have_right( 'dashboard', 'manage_security_issues' ) && mainwp_current_user_have_right( 'dashboard', 'test_connection' ) || mainwp_current_user_have_right( 'dashboard', 'manage_groups' ) ) {
-					MainWP_Manage_Sites::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'managesites',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'add_sites',
+						'edit_sites',
+						'delete_sites',
+						'access_individual_dashboard',
+						'access_wpadmin_on_child_sites',
+						'manage_security_issues',
+						'test_connection',
+						'manage_groups',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Manage_Sites::class, 'init_menu' ),
+				'leftbar_order'      => 1,
+			);
 
 			// Manage Clients.
-			if ( ! self::is_disable_menu_item( 2, 'ManageClients' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_clients' ) ) {
-					MainWP_Client::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'ManageClients',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_clients',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Client::class, 'init_menu' ),
+				'leftbar_order'      => 2,
+			);
 
 			// Manage Tags.
-			if ( ! self::is_disable_menu_item( 2, 'ManageGroups' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_groups' ) ) {
-					MainWP_Manage_Groups::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'ManageGroups',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_groups',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Manage_Groups::class, 'init_menu' ),
+			);
 
 			// Manage Updates.
-			if ( ! self::is_disable_menu_item( 2, 'UpdatesManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'update_wordpress' ) || mainwp_current_user_have_right( 'dashboard', 'update_plugins' ) || mainwp_current_user_have_right( 'dashboard', 'update_themes' ) || mainwp_current_user_have_right( 'dashboard', 'update_translations' ) || mainwp_current_user_have_right( 'dashboard', 'ignore_unignore_updates' ) || mainwp_current_user_have_right( 'dashboard', 'trust_untrust_updates' ) ) {
-					MainWP_Updates::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'UpdatesManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'update_wordpress',
+						'update_plugins',
+						'update_themes',
+						'update_translations',
+						'ignore_unignore_updates',
+						'trust_untrust_updates',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Updates::class, 'init_menu' ),
+			);
 
 			// Manage Plugins.
-			if ( ! self::is_disable_menu_item( 2, 'PluginsManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'install_plugins' ) || mainwp_current_user_have_right( 'dashboard', 'delete_plugins' ) || mainwp_current_user_have_right( 'dashboard', 'activate_deactivate_plugins' ) ) {
-					MainWP_Plugins::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'PluginsManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'install_plugins',
+						'delete_plugins',
+						'activate_deactivate_plugins',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Plugins::class, 'init_menu' ),
+			);
 
 			// Manage Themes.
-			if ( ! self::is_disable_menu_item( 2, 'ThemesManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'install_themes' ) || mainwp_current_user_have_right( 'dashboard', 'delete_themes' ) || mainwp_current_user_have_right( 'dashboard', 'activate_deactivate_themes' ) ) {
-					MainWP_Themes::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'ThemesManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'install_themes',
+						'delete_themes',
+						'activate_deactivate_themes',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Themes::class, 'init_menu' ),
+			);
 
 			// Manage Users.
-			if ( ! self::is_disable_menu_item( 2, 'UserBulkManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_users' ) ) {
-					MainWP_User::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'UserBulkManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_users',
+					),
+				),
+				'init_menu_callback' => array( MainWP_User::class, 'init_menu' ),
+			);
 
 			// Manage Posts.
-			if ( ! self::is_disable_menu_item( 2, 'PostBulkManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_posts' ) ) {
-					MainWP_Post::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'PostBulkManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_posts',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Post::class, 'init_menu' ),
+			);
 
 			// Manage Pages.
-			if ( ! self::is_disable_menu_item( 2, 'PageBulkManage' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_pages' ) ) {
-					MainWP_Page::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'PageBulkManage',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_pages',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Page::class, 'init_menu' ),
+			);
 
 			// Manage Backups.
-			if ( ! self::is_disable_menu_item( 2, 'ManageBackups' ) ) {
-				MainWP_Manage_Backups::init_menu();
-			}
-
-			// Manage RESTAPI.
-			if ( ! self::is_disable_menu_item( 2, 'RESTAPI' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_dashboard_restapi' ) ) {
-					MainWP_Rest_Api_Page::init_menu();
-				}
-			}
-
-			// Monitoring Sites.
-			if ( ! self::is_disable_menu_item( 3, 'Extensions' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_extensions' ) ) {
-					MainWP_Extensions::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'ManageBackups',
+				'menu_level'         => 2,
+				'menu_rights'        => true,
+				'init_menu_callback' => array( MainWP_Manage_Backups::class, 'init_menu' ),
+			);
 
 			// Manage Settings.
-			if ( ! self::is_disable_menu_item( 2, 'Settings' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_dashboard_settings' ) ) {
-					MainWP_Settings::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'Settings',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_dashboard_settings',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Settings::class, 'init_menu' ),
+				'leftbar_order'      => 5,
+			);
+
+			// Manage RESTAPI.
+			$menus_items[] = array(
+				'slug'               => 'RESTAPI',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_dashboard_restapi',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Rest_Api_Page::class, 'init_menu' ),
+				'leftbar_order'      => 4,
+			);
+
+			// Manage Extensions.
+			$menus_items[] = array(
+				'slug'               => 'Extensions',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_extensions',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Extensions::class, 'init_menu' ),
+				'leftbar_order'      => 3,
+			);
 
 			// Manage Admin Passwords.
-			if ( ! self::is_disable_menu_item( 3, 'UpdateAdminPasswords' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'manage_users' ) ) {
-					MainWP_Bulk_Update_Admin_Passwords::init_menu();
-				}
-			}
+			$menus_items[] = array(
+				'slug'               => 'UpdateAdminPasswords',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'manage_users',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Bulk_Update_Admin_Passwords::class, 'init_menu' ),
+			);
 
 			// Monitoring Sites.
-			if ( ! self::is_disable_menu_item( 3, 'MonitoringSites' ) ) {
-				MainWP_Monitoring::init_menu();
-			}
+			$menus_items[] = array(
+				'slug'               => 'MonitoringSites',
+				'menu_level'         => 3,
+				'menu_rights'        => true,
+				'init_menu_callback' => array( MainWP_Monitoring::class, 'init_menu' ),
+			);
+
+			self::init_mainwp_menu_items( $menus_items, 'first' ); // do NOT change 'first', it related other hooks.
 
 			/**
 			 * Action: mainwp_admin_menu
@@ -203,11 +299,78 @@ class MainWP_Menu {
 			 *
 			 * @since 4.0
 			 */
-			do_action( 'mainwp_admin_menu' );
+			do_action( 'mainwp_admin_menu' ); // to compatible.
 
-			if ( ! self::is_disable_menu_item( 2, 'ServerInformation' ) ) {
-				if ( mainwp_current_user_have_right( 'dashboard', 'see_server_information' ) ) {
-					MainWP_Server_Information::init_menu();
+			$menus_items_low = array();
+
+			// Manage Admin Passwords.
+			$menus_items_low[] = array(
+				'slug'               => 'ServerInformation',
+				'menu_level'         => 2,
+				'menu_rights'        => array(
+					'dashboard' => array(
+						'see_server_information',
+					),
+				),
+				'init_menu_callback' => array( MainWP_Server_Information::class, 'init_menu' ),
+				'leftbar_order'      => 6,
+			);
+
+			self::init_mainwp_menu_items( $menus_items_low, 'second' );
+
+		}
+	}
+
+	/**
+	 * Method init_mainwp_menu_items()
+	 *
+	 * Init MainWP menus.
+	 *
+	 * @param array  $menus_items menus items.
+	 * @param string $part menus part.
+	 */
+	public static function init_mainwp_menu_items( $menus_items, $part ) {
+		if ( ! is_array( $menus_items ) ) {
+			return;
+		}
+
+		$menus_items = apply_filters( 'mainwp_init_primary_menu_items', $menus_items, $part );
+
+		MainWP_Utility::array_sort_existed_keys( $menus_items, 'leftbar_order' );
+
+		foreach ( $menus_items as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+			if ( ! empty( $item['slug'] ) && ! empty( $item['menu_level'] ) && ! empty( $item['init_menu_callback'] ) ) {
+				if ( ! self::is_disable_menu_item( intval( $item['menu_level'] ), $item['slug'] ) ) {
+					if ( is_callable( $item['init_menu_callback'] ) ) {
+						$accessable = false;
+						if ( isset( $item['menu_rights'] ) ) {
+							$item_rights = $item['menu_rights'];
+							if ( is_array( $item_rights ) && ! empty( $item_rights ) ) {
+								foreach ( $item_rights as $group_right => $rights ) {
+									if ( is_array( $rights ) ) {
+										foreach ( $rights as $func_right ) {
+											if ( mainwp_current_user_have_right( $group_right, $func_right ) ) {
+												$accessable = true;
+												break;
+											}
+										}
+									}
+									if ( $accessable ) {
+										break;
+									}
+								}
+							} elseif ( true === $item['menu_rights'] ) {
+								$accessable = true;
+							}
+						}
+
+						if ( $accessable ) {
+							call_user_func( $item['init_menu_callback'] );
+						}
+					}
 				}
 			}
 		}
@@ -392,7 +555,8 @@ class MainWP_Menu {
 		$right = isset( $params['right'] ) ? $params['right'] : '';
 		$id    = isset( $params['id'] ) ? $params['id'] : '';
 
-		$icon = isset( $params['icon'] ) ? $params['icon'] : '';
+		$icon          = isset( $params['icon'] ) ? $params['icon'] : '';
+		$leftsub_order = isset( $params['leftsub_order'] ) ? $params['leftsub_order'] : '';
 
 		/**
 		 * MainWP Left Menu, Sub Menu & Active menu slugs.
@@ -428,7 +592,7 @@ class MainWP_Menu {
 			if ( 'mainwp_tab' === $parent_key ) {
 				$mainwp_leftmenu[ $parent_key ][] = array( $title, $slug, $href, $id );
 			} else {
-				$mainwp_sub_leftmenu['leftbar'][ $parent_key ][] = array( $title, $slug, $href, $id );
+				$mainwp_sub_leftmenu['leftbar'][ $parent_key ][] = array( $title, $slug, $href, $id, $leftsub_order );
 
 				if ( ! empty( $slug ) ) {
 					$_mainwp_menu_active_slugs['leftbar'][ $slug ] = $parent_key; // to get active menu.
@@ -444,7 +608,12 @@ class MainWP_Menu {
 		}
 
 		if ( ! empty( $slug ) ) {
-			$_mainwp_menu_active_slugs[ $slug ] = $parent_key; // to get active menu.
+			$no_submenu = ! empty( $params['nosubmenu'] ) ? true : false;
+			if ( $no_submenu ) {
+				$_mainwp_menu_active_slugs[ $slug ] = $slug; // to get active menu.
+			} else {
+				$_mainwp_menu_active_slugs[ $slug ] = $parent_key; // to get active menu.
+			}
 		}
 	}
 
@@ -632,18 +801,9 @@ class MainWP_Menu {
 						}
 					}
 					?>
-				<div id="mainwp-first-level-wpitems-menu" class="ui vertical labeled inverted icon tiny menu">
+				<div id="mainwp-first-level-wpitems-menu" class="ui vertical labeled inverted icon mini menu">
 					<a class="item" href="#" id="mainwp-collapse-second-level-navigation">
-						<i class="angle double left icon"></i>
-						<span class="ui small text" style="font-size:8px"><?php esc_html_e( 'Hide Menu', 'mainwp' ); ?></span>
-					</a>
-					<a class="item" href="<?php echo esc_html( $link['url'] ); ?>">
-						<i class="wordpress icon"></i> <?php //phpcs:ignore -- ignore wordpress icon. ?>
-						<span class="ui small text"><?php esc_html_e( 'WP Admin', 'mainwp' ); ?></span>
-					</a> 
-					<a class="item" href="<?php echo wp_logout_url(); // phpcs:ignore WordPress.Security.EscapeOutput ?>">
-						<i class="sign out icon"></i>
-						<span class="ui small text"><?php esc_html_e( 'Log Out', 'mainwp' ); ?></span>
+						<i class="double angle left icon"></i>
 					</a>
 				</div>
 			</div>
@@ -697,9 +857,10 @@ class MainWP_Menu {
 						// phpcs:enable
 
 						if ( is_array( $sub_bar_leftmenu ) && ! empty( $bar_active_item_key ) && isset( $sub_bar_leftmenu[ $bar_active_item_key ] ) && is_array( $sub_bar_leftmenu[ $bar_active_item_key ] ) ) {
-
+							$sub_bar_leftmenu_active_items = $sub_bar_leftmenu[ $bar_active_item_key ];
+							MainWP_Utility::array_sort_existed_keys( $sub_bar_leftmenu_active_items, 4 ); //phpcs:ignore Squiz.PHP.CommentedOutCode.Found -- 4 => 'leftsub_order'.
 							$set_actived = false;
-							foreach ( $sub_bar_leftmenu[ $bar_active_item_key ] as $item ) {
+							foreach ( $sub_bar_leftmenu_active_items as $item ) {
 
 								if ( empty( $item ) || ! is_array( $item ) ) {
 									continue;
@@ -738,7 +899,7 @@ class MainWP_Menu {
 									echo '</div>';
 									echo '</div>';
 								} else {
-									echo '<div ' . $id_attr . ' class="item">';
+									echo '<div ' . $id_attr . " class=\"item $active_item\">";
 									echo "<a class='title $active_item' href=\"$href\">$title</a>";
 									echo '</div>';
 								}
@@ -750,6 +911,7 @@ class MainWP_Menu {
 					</div>
 					</div>
 				</div>
+				
 				<?php
 				/**
 				 * Action: after_mainwp_menu
@@ -764,6 +926,9 @@ class MainWP_Menu {
 				jQuery( document ).ready( function () {
 
 					mainwp_left_bar_showhide_init = function(){
+						if(jQuery('body').hasClass('mainwp-hidden-second-level-navigation')){
+							return; // hide always.
+						}
 						if(jQuery('body').hasClass('toplevel_page_mainwp_tab')){
 							return; // hide always.
 						}
@@ -774,11 +939,11 @@ class MainWP_Menu {
 					mainwp_left_bar_showhide = function( lbar, show ){
 						if ( show ) {
 							jQuery( '#mainwp-second-level-navigation' ).show();
-							jQuery( '.mainwp-content-wrap' ).css( "margin-left", "272px" );
-							jQuery( '#mainwp-main-navigation-container' ).css( "width", "272px" );
+							jQuery( '.mainwp-content-wrap' ).css( "margin-left", "242px" );
+							jQuery( '#mainwp-main-navigation-container' ).css( "width", "242px" );
 							jQuery( lbar ).find( '.icon' ).removeClass( 'right' );
 							jQuery( lbar ).find( '.icon' ).addClass( 'left' );
-							jQuery( lbar ).find( '.text' ).html( 'Hide Menu' );
+							jQuery( lbar ).css( "left", "242px" );
 							jQuery( lbar ).removeClass( 'collapsed' );
 							mainwp_ui_state_save( 'showmenu', 1 );
 						} else {
@@ -787,7 +952,7 @@ class MainWP_Menu {
 							jQuery( '#mainwp-main-navigation-container' ).css( "width", "72px" );
 							jQuery( lbar ).find( '.icon' ).removeClass( 'left' );
 							jQuery( lbar ).find( '.icon' ).addClass( 'right' );
-							jQuery( lbar ).find( '.text' ).html( 'Show Menu' );
+							jQuery( lbar ).css( "left", "72px" );
 							jQuery( lbar ).addClass( 'collapsed' );
 							mainwp_ui_state_save( 'showmenu', 0 );
 						}
@@ -983,6 +1148,12 @@ class MainWP_Menu {
 										<a class="item" href="admin.php?page=PageBulkAdd"><?php esc_html_e( 'Add New Page', 'mainwp' ); ?></a>
 									</div>
 								</div>
+								<div class="item accordion">
+									<div class="title"><a href="admin.php?page=ManageApiBackups"><?php esc_html_e( 'API Backups', 'mainwp' ); ?></a><i class="dropdown icon"></i></div>
+									<div class="content menu">
+										<a class="item" href="admin.php?page=ManageApiBackups"><?php esc_html_e( 'API Backups', 'mainwp' ); ?></a>
+									</div>
+								</div>
 						</div>
 					</div>
 					<div class="item">
@@ -993,6 +1164,23 @@ class MainWP_Menu {
 							<a class="item" href="admin.php?page=ClientAddField"><?php esc_html_e( 'Client Fields', 'mainwp' ); ?></a>
 						</div>
 					</div>
+
+					<div class="item">
+						<div class="title"><a href="admin.php?page=ManageCostTracker" class="with-sub"><?php esc_html_e( 'Cost Tracker', 'mainwp' ); ?></a><i class="dropdown icon"></i></div>
+						<div class="content menu">
+							<a class="item" href="admin.php?page=ManageCostTracker"><?php esc_html_e( 'Cost Tracker', 'mainwp' ); ?></a>
+							<a class="item" href="admin.php?page=CostTrackerAdd"><?php esc_html_e( 'Add Cost', 'mainwp' ); ?></a>
+							<a class="item" href="admin.php?page=CostTrackerSettings"><?php esc_html_e( 'Cost Tracker Settings', 'mainwp' ); ?></a>
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="title"><a href="admin.php?page=InsightsOverview" class="with-sub"><?php esc_html_e( 'Insights', 'mainwp' ); ?></a><i class="dropdown icon"></i></div>
+						<div class="content menu">
+							<a class="item" href="admin.php?page=InsightsOverview"><?php esc_html_e( 'Insights', 'mainwp' ); ?></a>
+						</div>
+					</div>
+
 					<div class="item">
 						<div class="title"><a href="admin.php?page=RESTAPI" class="with-sub"><?php esc_html_e( 'REST API', 'mainwp' ); ?></a><i class="dropdown icon"></i></div>
 						<div class="content menu">
@@ -1021,7 +1209,7 @@ class MainWP_Menu {
 							<a class="item" href="admin.php?page=ServerInformation"><?php esc_html_e( 'Server', 'mainwp' ); ?></a>
 							<a class="item" href="admin.php?page=ServerInformationCron"><?php esc_html_e( 'Cron Schedules', 'mainwp' ); ?></a>
 							<a class="item" href="admin.php?page=ErrorLog"><?php esc_html_e( 'Error Log', 'mainwp' ); ?></a>
-							<a class="item" href="admin.php?page=ActionLogs"><?php esc_html_e( 'Action Logs', 'mainwp' ); ?></a>
+							<a class="item" href="admin.php?page=ActionLogs"><?php esc_html_e( 'Custom Event Monitor', 'mainwp' ); ?></a>
 							<a class="item" href="admin.php?page=PluginPrivacy"><?php esc_html_e( 'Plugin Privacy', 'mainwp' ); ?></a>
 						</div>
 					</div>

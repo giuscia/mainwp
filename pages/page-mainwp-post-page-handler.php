@@ -292,6 +292,7 @@ class MainWP_Post_Page_Handler {
 
 		?>
 		<div class="ui modal" id="mainwp-posting-post-modal">
+			<i class="close icon"></i>
 			<div class="header"><?php $edit_id ? esc_html_e( 'Edit Post', 'mainwp' ) : esc_html_e( 'New Post', 'mainwp' ); ?></div>
 			<div class="scrolling content">
 				<?php
@@ -331,7 +332,6 @@ class MainWP_Post_Page_Handler {
 		</div>
 		<div class="actions">
 			<a href="admin.php?page=PostBulkAdd" class="ui green button"><?php esc_html_e( 'New Post', 'mainwp' ); ?></a>
-			<div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
 		</div>
 	</div>
 	<div class="ui active inverted dimmer" id="mainwp-posting-running">
@@ -362,6 +362,7 @@ class MainWP_Post_Page_Handler {
 		$edit_id = get_post_meta( $post_id, '_mainwp_edit_post_id', true );
 		?>
 		<div class="ui modal" id="mainwp-posting-post-modal">
+			<i class="close icon"></i>
 			<div class="header"><?php $edit_id ? esc_html_e( 'Edit Post', 'mainwp' ) : esc_html_e( 'New Post', 'mainwp' ); ?></div>
 			<div class="scrolling content">
 				<?php
@@ -380,7 +381,6 @@ class MainWP_Post_Page_Handler {
 			</div>
 		<div class="actions">
 			<a href="admin.php?page=PostBulkAdd" class="ui green button"><?php esc_html_e( 'New Post', 'mainwp' ); ?></a>
-			<div class="ui cancel button"><?php esc_html_e( 'Close', 'mainwp' ); ?></div>
 		</div>
 	</div>
 	<div class="ui active inverted dimmer" id="mainwp-posting-running">

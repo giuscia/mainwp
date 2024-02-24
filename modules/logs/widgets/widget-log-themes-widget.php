@@ -186,7 +186,7 @@ class Log_Themes_Widget {
 								}
 							},
 							tooltip: {
-								theme: 'dark'
+								theme: 'dark',
 							},
 						}
 						var clients = new ApexCharts(document.querySelector("#mainwp-module-log-chart-themes-management-wrapper"), options);

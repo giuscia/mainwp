@@ -126,8 +126,8 @@ class Api_Backups_Settings {
 							<a class="item" data-tab="linode"><?php echo esc_html__( 'Akamai (Linode)', 'mainwp' ); ?></a>
 							<a class="item" data-tab="digitalocean"><?php echo esc_html__( 'DigitalOcean', 'mainwp' ); ?></a>
 							
-							<a class="item" data-tab="cpanel"><?php echo esc_html__( 'cPanel', 'mainwp' ); ?></a>
-							<a class="item" data-tab="plesk"><?php echo esc_html__( 'Plesk ( WP Toolkit )', 'mainwp' ); ?></a>
+							<a class="item" data-tab="cpanel"><?php echo esc_html__( 'cPanel (WP Toolkit)', 'mainwp' ); ?></a>
+							<a class="item" data-tab="plesk"><?php echo esc_html__( 'Plesk (WP Toolkit)', 'mainwp' ); ?></a>
 						</div>
 					</div>
 					<div class="thirteen wide column">
@@ -782,7 +782,7 @@ class Api_Backups_Settings {
 						<option <?php echo ( 'DigitalOcean' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="1"><?php esc_html_e( 'DigitalOcean', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Linode' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="2"><?php esc_html_e( 'Akamai (Linode)', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Vultr' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="3"><?php esc_html_e( 'Vultr', 'mainwp' ); ?></option>
-						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel', 'mainwp' ); ?></option>
+						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel (WP Toolkit)', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Plesk' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="5"><?php esc_html_e( 'Plesk (WP Toolkit)', 'mainwp' ); ?></option>
 					</select>
 				</div>
@@ -886,8 +886,8 @@ class Api_Backups_Settings {
 						<option <?php echo ( 'DigitalOcean' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="1"><?php esc_html_e( 'DigitalOcean', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Linode' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="2"><?php esc_html_e( 'Akamai (Linode)', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Vultr' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="3"><?php esc_html_e( 'Vultr', 'mainwp' ); ?></option>
-						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel', 'mainwp' ); ?></option>
-						<option <?php echo ( 'Plesk' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="5"><?php esc_html_e( 'Plesk', 'mainwp' ); ?></option>
+						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel (WP Toolkit)', 'mainwp' ); ?></option>
+						<option <?php echo ( 'Plesk' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="5"><?php esc_html_e( 'Plesk (WP Toolkit)', 'mainwp' ); ?></option>
 					</select>
 				</div>
 			</div>

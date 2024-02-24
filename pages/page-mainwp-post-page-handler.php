@@ -257,6 +257,11 @@ class MainWP_Post_Page_Handler {
 	 */
 	public static function posting_bulk() {
 		$p_id               = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		
+		if ( ! isset( $_GET['posting_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['posting_nonce'] ), 'posting_nonce_' . $p_id ) ) {
+			wp_die( 'Invalid request!' );
+		}
+
 		$posting_bulk_sites = apply_filters( 'mainwp_posts_posting_bulk_sites', false );
 		?>
 		<input type="hidden" name="bulk_posting_id" id="bulk_posting_id" value="<?php echo intval( $p_id ); ?>"/>						

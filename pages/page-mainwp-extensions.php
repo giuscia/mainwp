@@ -203,6 +203,8 @@ class MainWP_Extensions {
 				$extension['product_id']          = isset( $options['product_id'] ) ? $options['product_id'] : '';
 				$extension['instance_id']         = isset( $options['instance_id'] ) ? $options['instance_id'] : '';
 				$extension['software_version']    = isset( $options['software_version'] ) ? $options['software_version'] : '';
+				$extension['mainwp_version']      = isset( $options['mainwp_version'] ) ? $options['mainwp_version'] : '';
+
 				if ( isset( $options['product_item_id'] ) ) {
 					$extension['product_item_id'] = $options['product_item_id'];
 				}

@@ -101,7 +101,7 @@ class Api_Backups_Hooks {
 	 */
 	public function add_subpage_menu_settings( $subpages = array() ) {
 		$subpages[] = array(
-			'title'    => esc_html__( 'API Backups - BETA', 'mainwp' ),
+			'title'    => esc_html__( 'API Backups', 'mainwp' ),
 			'slug'     => 'ApiBackups',
 			'callback' => array( Api_Backups_Settings::get_instance(), 'render_settings_page' ),
 			'class'    => '',

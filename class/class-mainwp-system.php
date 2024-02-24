@@ -27,7 +27,7 @@ class MainWP_System {
 	 *
 	 * @var string Current plugin version.
 	 */
-	public static $version = '5.0-RC2';
+	public static $version = '5.0-RC4.0';
 
 	/**
 	 * Private static variable to hold the single instance of the class.
@@ -56,7 +56,7 @@ class MainWP_System {
 	 *
 	 * @var string The plugin current update version.
 	 */
-	private $check_ver_update = '0.0.4';
+	private $check_ver_update = '0.0.5';
 
 	/**
 	 * Private variable to hold the plugin slug (mainwp/mainwp.php)
@@ -143,6 +143,10 @@ class MainWP_System {
 				add_action( 'mainwp_before_header', array( MainWP_System_View::get_class_name(), 'mainwp_4_update_notice' ) );
 			}
 
+			if ( ! empty( $currentVersion ) && version_compare( $currentVersion, '5.0', '<' ) && version_compare( $this->current_version, '5.0', '>=' ) ) {
+				add_action( 'mainwp_before_header', array( MainWP_System_View::get_class_name(), 'mainwp_ver5_update_notice' ) );
+			}
+
 			MainWP_Utility::update_option( 'mainwp_plugin_version', $this->current_version );
 		}
 
@@ -177,6 +181,7 @@ class MainWP_System {
 		}
 
 		MainWP_Extensions::init();
+		MainWP_Extensions_Groups::init();
 
 		$systemHandler = MainWP_System_Handler::instance();
 
@@ -268,6 +273,17 @@ class MainWP_System {
 	}
 
 	/**
+	 * Method get_dashboard_version()
+	 *
+	 * Get dashboard version.
+	 *
+	 * @return string $version Version.
+	 */
+	public function get_dashboard_version() {
+		return self::$version;
+	}
+
+	/**
 	 * Method load_all_options()
 	 *
 	 * Load all wp_options data.
@@ -340,6 +356,7 @@ class MainWP_System {
 				'mainwp_setting_demo_mode_enabled',
 				'mainwp_log_wait_lasttime',
 				'mainwp_updatescheck_start_last_schedule_timestamp',
+				'mainwp_cron_license_deactivated_alert_lasttime',
 			);
 
 			$options = apply_filters( 'mainwp_init_load_all_options', $options );
@@ -476,6 +493,16 @@ class MainWP_System {
 	}
 
 	/**
+	 * Method mainwp_crondeactivatedlicensesalert_action()
+	 *
+	 * Run cron activated licenses alert action.
+	 *
+	 */
+	public function mainwp_crondeactivatedlicensesalert_action() {
+		MainWP_System_Cron_Jobs::instance()->cron_deactivated_licenses_alert();
+	}
+
+	/**
 	 * Method mainwp_croncheckstatus_action()
 	 *
 	 * Run cron check sites status action.
@@ -522,7 +549,11 @@ class MainWP_System {
 	 */
 	public static function is_mainwp_site_page() {
 		if ( isset( $_GET['page'] ) && 'CostTrackerAdd' !== $_GET['page'] ) {
-			if ( ( isset( $_GET['id'] ) &&  ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) &&  ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) &&  ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) &&  ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) &&  ! empty( $_GET['scanid'] ) ) ) {
+			if ( ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) && ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) && ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) && ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) && ! empty( $_GET['scanid'] ) ) ) {
+				return true;
+			} elseif ( 'ServerInformation' === $_GET['page'] || 'ServerInformationCron' === $_GET['page'] || 'ErrorLog' === $_GET['page'] || 'ActionLogs' === $_GET['page'] || 'PluginPrivacy' === $_GET['page'] ) {
+				return true;
+			} elseif ( 'Settings' === $_GET['page'] || 'SettingsAdvanced' === $_GET['page'] || 'SettingsEmail' === $_GET['page'] || 'MainWPTools' === $_GET['page'] || 'SettingsInsights' === $_GET['page'] || 'SettingsApiBackups' === $_GET['page'] ) {
 				return true;
 			}
 		}
@@ -689,6 +720,20 @@ class MainWP_System {
 			global $wpdb;
 			$wpdb->query( 'DELETE FROM ' . $wpdb->usermeta . ' WHERE meta_key = "mainwp_widgets_sorted_toplevel_page_mainwp_tab" OR meta_key="mainwp_settings_show_widgets"' );//phpcs:ignore -- safe.
 		}
+
+		if ( version_compare( $saved_ver, '0.0.5', '<' ) ) {
+			$all_ext = MainWP_Extensions_View::get_available_extensions();
+			foreach ( $all_ext as $slug => $info ) {
+				$data = MainWP_Api_Manager::instance()->get_activation_info( $slug );
+				if ( is_array( $data ) && isset( $data['api_key'] ) ) {
+					$data['api_key']       = '';
+					$data['activated_key'] = 'Deactivated';
+					MainWP_Api_Manager::instance()->set_activation_info( $slug, $data );
+				}
+			}
+			update_option( 'mainwp_extensions_all_activation_cached', '' );
+		}
+
 		MainWP_Utility::update_option( 'mainwp_update_check_version', $current_ver );
 	}
 
@@ -714,10 +759,10 @@ class MainWP_System {
 		}
 
 		add_action( 'mainwp_activate_extention', array( MainWP_System_Handler::instance(), 'activate_extension' ), 10, 2 ); // @deprecated Use 'mainwp_activate_extension' instead.
-		add_action( 'mainwp_deactivate_extention', array( MainWP_System_Handler::instance(), 'deactivate_extension' ), 10, 1 ); // @deprecated Use 'mainwp_deactivate_extension' instead.
+		add_action( 'mainwp_deactivate_extention', array( MainWP_System_Handler::instance(), 'deactivate_extension' ), 10, 3 ); // @deprecated Use 'mainwp_deactivate_extension' instead.
 
 		add_action( 'mainwp_activate_extension', array( MainWP_System_Handler::instance(), 'activate_extension' ), 10, 2 );
-		add_action( 'mainwp_deactivate_extension', array( MainWP_System_Handler::instance(), 'deactivate_extension' ), 10, 1 );
+		add_action( 'mainwp_deactivate_extension', array( MainWP_System_Handler::instance(), 'deactivate_extension' ), 10, 3 );
 
 		/**
 		 * MainWP use external primary backup method.

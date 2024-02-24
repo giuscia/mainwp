@@ -350,6 +350,8 @@ class MainWP_Notification_Settings {
 			$email_description = esc_html__( 'Alert if any of your websites site health goes under the threshold.', 'mainwp' );
 		} elseif ( 'http_check' === $type ) {
 			$email_description = esc_html__( 'Alert if any of your websites return unexpected HTTP status after running updates.', 'mainwp' );
+		} elseif ( 'deactivated_license_alert' === $type ) {
+			$email_description = esc_html__( 'Receive a notification when an extension\'s license is deactivated.', 'mainwp' );
 		}
 
 		$addition_desc = apply_filters( 'mainwp_notification_type_desc', '', $type );
@@ -388,9 +390,10 @@ class MainWP_Notification_Settings {
 	 */
 	public static function get_notification_types( $type = '' ) {
 		$types = array(
-			'daily_digest' => esc_html__( 'Daily Digest Email', 'mainwp' ),
-			'uptime'       => esc_html__( 'Basic Uptime Monitoring Email', 'mainwp' ),
-			'site_health'  => esc_html__( 'Site Health Monitoring Email', 'mainwp' ),
+			'daily_digest'              => esc_html__( 'Daily Digest Email', 'mainwp' ),
+			'uptime'                    => esc_html__( 'Basic Uptime Monitoring Email', 'mainwp' ),
+			'site_health'               => esc_html__( 'Site Health Monitoring Email', 'mainwp' ),
+			'deactivated_license_alert' => esc_html__( 'Extension License Deactivation Notification Email', 'mainwp' ),
 		);
 
 		$enable_http_check = get_option( 'mainwp_check_http_response', 0 );
@@ -543,6 +546,12 @@ class MainWP_Notification_Settings {
 				'recipients' => $recipients,
 				'subject'    => 'HTTP response check',
 				'heading'    => 'Sites Check',
+			),
+			'deactivated_license_alert'  => array(
+				'disable'    => $disable,
+				'recipients' => $recipients,
+				'subject'    => 'Extension License Deactivation Notification',
+				'heading'    => 'Extension License Deactivation Notification',
 			),
 		);
 

@@ -951,8 +951,8 @@ class MainWP_UI {
 			 */
 			do_action( 'mainwp_before_header', $websites );
 			?>
-			<div id="mainwp-top-header" class="ui sticky">
-				<div class="ui middle aligned grid">
+			<div id="mainwp-top-header" class="ui native sticky">
+				<div class="ui middle aligned stackable grid">
 					<div class="six wide left aligned middle aligned column">
 						<h4 class="mainwp-page-title ui header">
 							<?php echo $left; // phpcs:ignore WordPress.Security.EscapeOutput ?>
@@ -1023,7 +1023,9 @@ class MainWP_UI {
 				jQuery( '#mainwp-documentation-sidebar' ).prependTo( 'body' );
 				jQuery( 'body > div#wpwrap' ).addClass( 'pusher' );
 
-				jQuery( '.ui.sticky' ).sticky( { pushing: false } ).sticky();
+				jQuery( '.ui.sticky' ).sticky( { 
+					pushing: false,
+				 } ).sticky();
 
 				jQuery( '#mainwp-help-sidebar' ).on( 'click', function() {
 					jQuery( '.ui.help.sidebar' ).sidebar( {
@@ -1185,20 +1187,20 @@ class MainWP_UI {
 			do_action( 'mainwp_after_subheader' );
 	}
 
-			/**
-			 * Method gen_groups_sites_selection()
-			 *
-			 * Generate group sites selection box.
-			 *
-			 * @return void Render group sites selection box.
-			 *
-			 * @uses \MainWP\Dashboard\MainWP_DB_Common::get_groups_for_manage_sites()
-			 * @uses \MainWP\Dashboard\MainWP_DB_Common::get_not_empty_groups()
-			 * @uses \MainWP\Dashboard\MainWP_DB::get_sql_websites_for_current_user()
-			 * @uses \MainWP\Dashboard\MainWP_DB::query()
-			 * @uses \MainWP\Dashboard\MainWP_DB::fetch_object()
-			 * @uses \MainWP\Dashboard\MainWP_DB::free_result()
-			 */
+	/**
+	 * Method gen_groups_sites_selection()
+	 *
+	 * Generate group sites selection box.
+	 *
+	 * @return void Render group sites selection box.
+	 *
+	 * @uses \MainWP\Dashboard\MainWP_DB_Common::get_groups_for_manage_sites()
+	 * @uses \MainWP\Dashboard\MainWP_DB_Common::get_not_empty_groups()
+	 * @uses \MainWP\Dashboard\MainWP_DB::get_sql_websites_for_current_user()
+	 * @uses \MainWP\Dashboard\MainWP_DB::query()
+	 * @uses \MainWP\Dashboard\MainWP_DB::fetch_object()
+	 * @uses \MainWP\Dashboard\MainWP_DB::free_result()
+	 */
 	public static function gen_groups_sites_selection() {
 		$sql      = MainWP_DB::instance()->get_sql_websites_for_current_user( false, null, 'wp.url', false, false, null, false, array( 'premium_upgrades', 'plugins_outdate_dismissed', 'themes_outdate_dismissed', 'plugins_outdate_info', 'themes_outdate_info', 'favi_icon' ) );
 		$websites = MainWP_DB::instance()->query( $sql );
@@ -1430,7 +1432,7 @@ class MainWP_UI {
 		?>
 		<div id="mainwp-page-navigation-wrapper">
 			
-			<div class="ui vertical menu mainwp-page-navigation" id="mainwp-forthlevel-nav-slider">
+			<div class="ui vertical menu mainwp-page-navigation">
 				<?php
 
 				if ( is_array( $subitems ) ) {
@@ -1998,15 +2000,15 @@ class MainWP_UI {
 	endif;
 	}
 
-			/**
-			 * Method render_screen_options()
-			 *
-			 * Render modal window for Page Settings.
-			 *
-			 * @param bool $setting_page Default: True. Widgets that you want to hide in the MainWP Overview page.
-			 *
-			 * @return void  Render modal window for Page Settings html.
-			 */
+	/**
+	 * Method render_screen_options()
+	 *
+	 * Render modal window for Page Settings.
+	 *
+	 * @param bool $setting_page Default: True. Widgets that you want to hide in the MainWP Overview page.
+	 *
+	 * @return void  Render modal window for Page Settings html.
+	 */
 	public static function render_screen_options( $setting_page = true ) { // phpcs:ignore -- Current complexity is the only way to achieve desired results, pull request solutions appreciated.
 
 				$default_widgets = array(
@@ -2178,6 +2180,35 @@ class MainWP_UI {
 		</form>
 	</div>
 		<?php
+	}
+
+	public static function render_install_extensions_promo_modal() {
+		$mainwp_api_key = MainWP_Api_Manager_Key::instance()->get_decrypt_master_api_key();
+		?>
+		<div class="ui small modal" id="mainwp-install-extensions-promo-modal">
+			<i class="close icon"></i>
+			<?php if ( empty( $mainwp_api_key ) ) : ?>
+				<div class="header"><?php esc_html_e( 'Get MainWP Pro', 'mainwp' ); ?></div>
+				<div class="content">
+					<div class="ui header"><?php esc_html_e( 'With your MainWP Pro subscription, you get access to:', 'mainwp' ); ?></div>
+					<div class="ui bulleted list">
+						<div class="item"><?php esc_html_e( 'All 30+ Existing Premium Extensions', 'mainwp' ); ?></div>
+						<div class="item"><?php esc_html_e( 'All Future Extensions', 'mainwp' ); ?></div>
+						<div class="item"><?php esc_html_e( 'Critical Security & Performance Updates', 'mainwp' ); ?></div>
+						<div class="item"><?php esc_html_e( 'Priority Support with Subscription', 'mainwp' ); ?></div>
+						<div class="item"><?php esc_html_e( 'Manage Unlimited Websites', 'mainwp' ); ?></div>
+					</div>
+					<a href="https://mainwp.com/signup/?utm_campaign=Dashboard%20-%20Upgrade%20to%20Pro&utm_source=Dashboard&utm_medium=grey%20link%20modal&utm_term=get%20mainwp%20pro" class="ui big green button" target="_blank">Get MainWP Pro</a>
+				</div>
+			<?php else : ?>
+				<div class="header"><?php esc_html_e( 'Install Extensions', 'mainwp' ); ?></div>
+				<div class="content">
+				<div class="ui header"><?php esc_html_e( 'Extension not activated', 'mainwp' ); ?></div>
+				<div><?php esc_html_e( 'Go to the ', 'mainwp' ); ?><a href="admin.php?page=Extensions">MainWP > Extensions</a><?php esc_html_e( ' page to install and activate extensions', 'mainwp' ); ?></div>
+				</div>
+			<?php endif; ?>
+		</div>
+	<?php
 	}
 
 	/**

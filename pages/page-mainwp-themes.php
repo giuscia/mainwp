@@ -230,6 +230,7 @@ class MainWP_Themes {
 				'href'       => 'admin.php?page=ThemesManage',
 				'slug'       => 'ThemesManage',
 				'right'      => '',
+				'leftsub_order_level2' => 1,
 			),
 			array(
 				'title'      => esc_html__( 'Install', 'mainwp' ),
@@ -237,6 +238,7 @@ class MainWP_Themes {
 				'href'       => 'admin.php?page=ThemesInstall',
 				'slug'       => 'ThemesInstall',
 				'right'      => 'install_themes',
+				'leftsub_order_level2' => 2,
 			),
 			array(
 				'title'      => esc_html__( 'Advanced Auto Updates', 'mainwp' ),
@@ -244,6 +246,7 @@ class MainWP_Themes {
 				'href'       => 'admin.php?page=ThemesAutoUpdate',
 				'slug'       => 'ThemesAutoUpdate',
 				'right'      => '',
+				'leftsub_order_level2' => 3,
 			),
 			array(
 				'title'      => esc_html__( 'Ignored Updates', 'mainwp' ),
@@ -251,6 +254,15 @@ class MainWP_Themes {
 				'href'       => 'admin.php?page=ThemesIgnore',
 				'slug'       => 'ThemesIgnore',
 				'right'      => '',
+				'leftsub_order_level2' => 4,
+			),
+			array(
+				'title'      => esc_html__( 'Abandoned Themes', 'mainwp' ),
+				'parent_key' => 'ThemesManage',
+				'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-themes',
+				'slug'       => 'ThemesManage',
+				'right'      => '',
+				'leftsub_order_level2' => 4.1,
 			),
 			array(
 				'title'      => esc_html__( 'Ignored Abandoned', 'mainwp' ),
@@ -258,6 +270,7 @@ class MainWP_Themes {
 				'href'       => 'admin.php?page=ThemesIgnoredAbandoned',
 				'slug'       => 'ThemesIgnoredAbandoned',
 				'right'      => '',
+				'leftsub_order_level2' => 5,
 			),
 		);
 

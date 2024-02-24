@@ -322,6 +322,29 @@ class MainWP_Hooks {
 	}
 
 	/**
+	 * Method is_pro_member()
+	 *
+	 * Check for inactive MainWP Extensions.
+	 *
+	 * @param mixed $input Input value.
+	 *
+	 * @return bool Activation notice.
+	 */
+	public static function is_pro_member( $input = false ) {
+		$info = get_option( 'mainwp_extensions_plan_info' );
+		if ( ! empty( $info ) ) {
+			$info = json_decode( $info, true );
+			if ( is_array( $info ) && isset( $info['plan_purchased'] ) && isset( $info['plan_status'] ) ) {
+				if ( 'active' === $info['plan_status'] && in_array( $info['plan_purchased'], array( 'monthly', 'yearly', 'lifetime' ) ) ) {
+					return true;
+				}
+			}
+		}
+		return $input;
+	}
+
+
+	/**
 	 * Method hook_delete_site()
 	 *
 	 * Hook to delete Child Site.
@@ -473,28 +496,6 @@ class MainWP_Hooks {
 	 */
 	public function is_extension_activated( $input, $slug ) {
 		return MainWP_Extensions_Handler::is_extension_activated( $slug );
-	}
-
-	/**
-	 * Method is_pro_member()
-	 *
-	 * Check for inactive MainWP Extensions.
-	 *
-	 * @param mixed $input Input value.
-	 *
-	 * @return bool Activation notice.
-	 */
-	public function is_pro_member( $input = false ) {
-		$info = get_option( 'mainwp_extensions_plan_info' );
-		if ( ! empty( $info ) ) {
-			$info = json_decode( $info, true );
-			if ( is_array( $info ) && isset( $info['plan_purchased'] ) && isset( $info['plan_status'] ) ) {
-				if ( 'active' === $info['plan_status'] && in_array( $info['plan_purchased'], array( 'monthly', 'yearly', 'lifetime' ) ) ) {
-					return true;
-				}
-			}
-		}
-		return $input;
 	}
 
 

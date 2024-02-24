@@ -103,6 +103,60 @@ class MainWP_Notification {
 		return false;
 	}
 
+
+	/**
+	 * Method send_license_deactivated_alert().
+	 *
+	 * Send extensions license deactivated email notification.
+	 *
+	 * @param mixed $email_settings Email settings.
+	 * @param array $deactivated_license Websites http status.
+	 * @param bool  $plain_text Text format.
+	 *
+	 * @return bool False if failed.
+	 */
+	public static function send_license_deactivated_alert( $email_settings, $deactivated_license, $plain_text ) {
+
+		if ( $plain_text ) {
+			$content_type = "Content-Type: text/plain; charset=\"utf-8\"\r\n";
+		} else {
+			$content_type = "Content-Type: text/html; charset=\"utf-8\"\r\n";
+		}
+
+		$heading = $email_settings['heading'];
+		$subject = $email_settings['subject'];
+
+		$formated_content = MainWP_Notification_Template::instance()->get_template_html(
+			'emails/mainwp-licenses-deactivated-alert-email.php',
+			array(
+				'deactivated_licenses' => $deactivated_license,
+				'heading'              => $heading,
+			)
+		);
+
+		$email = '';
+
+		if ( ! empty( $email_settings['recipients'] ) ) {
+			$email .= ',' . $email_settings['recipients']; // send to recipients.
+		}
+
+		$email = trim( $email, ',' );
+
+		if ( ! empty( $email ) ) {
+			MainWP_Logger::instance()->debug( 'license deactivated alert:: send mail ::' );
+			self::send_wp_mail(
+				$email,
+				$subject,
+				$formated_content,
+				$content_type
+			);
+			return true;
+		}
+
+		return false;
+	}
+
+
 	/**
 	 * Method send_daily_digest_notification().
 	 *

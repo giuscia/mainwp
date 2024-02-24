@@ -286,6 +286,33 @@ class MainWP_System_View {
 	}
 
 	/**
+	 * MainWP Version ver 5 update Notice.
+	 *
+	 * @uses  \MainWP\Dashboard\MainWP_Utility::show_mainwp_message()
+	 */
+	public static function mainwp_ver5_update_notice() {
+		if ( MainWP_Utility::show_mainwp_message( 'notice', 'upgrade_ver5' ) ) {
+			?>
+			<div class="ui message green" style="margin-bottom: 0; border-radius: 0;">
+				<?php
+				$msg  = 'License Reactivation Required%s';
+				$msg .= "As part of our upgrade to MainWP Dashboard version 5, we've deactivated extension licenses to verify their validity and ensure everything is up to date.%s";
+				$msg .= "Quick Reactivation:%s";
+				$msg .= "Simply click the \"Activate Extensions\" button on the Extensions page to reactivate all your Pro extension licenses in one go. It's quick and easy!%s";
+				$msg .= 'We appreciate your understanding and cooperation in keeping your MainWP ecosystem secure and efficient. Need help? Reach out to our support team.%s';
+				$msg .= 'Thank you for using MainWP!%s';
+				
+				echo printf( esc_html__( $msg ), '<br>', '<br>', '<br>', '<br>', '<br>', '<br>' );
+				
+				?>
+				<i class="close icon mainwp-notice-dismiss" notice-id="upgrade_ver5"></i>
+			</div>
+			<?php
+		}
+	}
+
+
+	/**
 	 * Render Administration Notice.
 	 *
 	 * @uses \MainWP\Dashboard\MainWP_System::is_mainwp_pages()
@@ -805,8 +832,11 @@ class MainWP_System_View {
 					$class_string .= ' mainwp-individual-client-overview ';
 				}
 			}
+			if ( isset( $_GET['page'] ) && ( 'ServerInformation' === $_GET['page'] || 'ServerInformationCron' === $_GET['page'] || 'ErrorLog' === $_GET['page'] || 'ActionLogs' === $_GET['page'] || 'PluginPrivacy' === $_GET['page'] || 'Settings' === $_GET['page'] || 'SettingsAdvanced' === $_GET['page'] || 'SettingsEmail' === $_GET['page'] || 'MainWPTools' === $_GET['page'] || 'SettingsInsights' === $_GET['page'] || 'SettingsApiBackups' === $_GET['page'] ) ) {
+				$class_string .= ' mainwp-individual-site-view ';
+			}
 			if ( isset( $_GET['page'] ) && 'CostTrackerAdd' !== $_GET['page'] ) {
-				if ( ( isset( $_GET['id'] ) &&  ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) &&  ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) &&  ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) &&  ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) &&  ! empty( $_GET['scanid'] ) ) ) {
+				if ( ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) ) || ( isset( $_GET['dashboard'] ) && ! empty( $_GET['dashboard'] ) ) || ( isset( $_GET['updateid'] ) && ! empty( $_GET['updateid'] ) ) || ( isset( $_GET['emailsettingsid'] ) && ! empty( $_GET['emailsettingsid'] ) ) || ( isset( $_GET['scanid'] ) && ! empty( $_GET['scanid'] ) ) ) {
 					$class_string .= ' mainwp-individual-site-view ';
 				}
 			}
@@ -856,6 +886,7 @@ class MainWP_System_View {
 		 */
 		do_action( 'mainwp_admin_footer' );
 		MainWP_UI::render_select_mainwp_themes_modal();
+		MainWP_UI::render_install_extensions_promo_modal();
 		?>
 		<div class="ui modal" id="mainwp-sync-sites-modal" current-wpid="<?php echo intval( $current_wpid ); ?>">
 			<i class="mainwp-modal-close close icon"></i>

@@ -227,18 +227,20 @@ class MainWP_Page {
 		);
 		$init_sub_subleftmenu = array(
 			array(
-				'title'      => esc_html__( 'Manage Pages', 'mainwp' ),
-				'parent_key' => 'PageBulkManage',
-				'href'       => 'admin.php?page=PageBulkManage',
-				'slug'       => 'PageBulkManage',
-				'right'      => 'manage_pages',
+				'title'                => esc_html__( 'Manage Pages', 'mainwp' ),
+				'parent_key'           => 'PageBulkManage',
+				'href'                 => 'admin.php?page=PageBulkManage',
+				'slug'                 => 'PageBulkManage',
+				'right'                => 'manage_pages',
+				'leftsub_order_level2' => 1,
 			),
 			array(
-				'title'      => esc_html__( 'Add New', 'mainwp' ),
-				'parent_key' => 'PageBulkManage',
-				'href'       => 'admin.php?page=PageBulkAdd',
-				'slug'       => 'PageBulkAdd',
-				'right'      => 'manage_pages',
+				'title'                => esc_html__( 'Add New', 'mainwp' ),
+				'parent_key'           => 'PageBulkManage',
+				'href'                 => 'admin.php?page=PageBulkAdd',
+				'slug'                 => 'PageBulkAdd',
+				'right'                => 'manage_pages',
+				'leftsub_order_level2' => 2,
 			),
 		);
 		MainWP_Menu::init_subpages_left_menu( $subPages, $init_sub_subleftmenu, 'PageBulkManage', 'Page' );

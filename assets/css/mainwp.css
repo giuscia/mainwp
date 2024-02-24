@@ -84,11 +84,11 @@
 /* Content Wrap */
 
 .mainwp-content-wrap {
-    margin-bottom: 60px;
+    margin-bottom: 0px;
 }
 
 .mainwp-ui-leftmenu .mainwp-content-wrap {
-    margin-left: 242px;
+    margin-left: 272px;
 }
 
 .mainwp-ui.toplevel_page_mainwp_tab.mainwp-ui-leftmenu .mainwp-content-wrap,
@@ -183,6 +183,7 @@
 
 .mainwp-sub-submenu {
     margin-bottom: 0px !important;
+    margin-top: 0px !important;
 }
 
 /* Menu */
@@ -193,8 +194,8 @@
 
     background-color: #3E3F3D;
 
-    width: 242px;
-    max-width: 242px;
+    width: 272px;
+    max-width: 272px;
 
     position: fixed;
     left: 0;
@@ -260,8 +261,8 @@
 
 #mainwp-collapse-second-level-navigation {
     position: fixed;
-    left: 242px;
-    bottom: 65px;
+    left: 272px;
+    bottom: 30px;
     padding: 7px 4px 7px 2px;
     border-radius: 0 8px 8px 0 !important;
     min-width: auto !important;
@@ -273,36 +274,20 @@
     font-size: 14px !important;
 }
 
-#mainwp-collapse-fourth-level-navigation {
-    position: fixed;
-    left: 412px;
-    bottom: 30px;
-    padding: 7px 4px 7px 2px;
-    border-radius: 0 8px 8px 0 !important;
-    min-width: auto !important;
-    border: none !important;
-}
-
-#mainwp-collapse-fourth-level-navigation .icon {
-    padding: 0px !important;
-    margin: 0px !important;
-    font-size: 14px !important;
-}
-
 #mainwp-second-level-navigation {
     background-color: #3E3F3D;
-    width: 170px;
+    width: 200px;
     box-shadow: 20px 0px 20px -18px rgba(0, 0, 0, 0.15) inset;
     -webkit-box-shadow: 20px 0px 20px -18px rgba(0, 0, 0, 0.15) inset;
     -moz-box-shadow: 20px 0px 20px -18px rgba(0, 0, 0, 0.15) inset;
+    overflow-y: auto;
+    overflow-x: hidden ;
 }
 
 #mainwp-main-menu {
     width: 100%;
     background: #1c1d1b !important;
 }
-
-
 
 #mainwp-second-level-navigation .ui.inverted.menu {
     background-color: #3E3F3D;
@@ -312,6 +297,7 @@
 }
 
 #mainwp-second-level-navigation .ui.inverted.menu .item {
+    padding: 0.7em 1.14285714em;
     color: #ffffff !important;
     box-shadow: 20px 0px 20px -18px rgba(0, 0, 0, 0.15) inset;
     -webkit-box-shadow: 20px 0px 20px -18px rgba(0, 0, 0, 0.15) inset;
@@ -327,8 +313,10 @@
     color: #7fb100 !important;
 }
 
-
-
+#mainwp-second-level-navigation .ui.menu .item.extension-inactive a,
+#mainwp-second-level-navigation .ui.menu a.item.extension-inactive{
+    color: rgba( 255,255,255,.3 ) !important;
+}
 
 #mainwp-navigation-icon {
     padding: 10px;

@@ -956,21 +956,21 @@ class Log_Insights_Page {
 	public static function render_screen_options() {
 
 		$default_widgets = array(
-			'recent_events'     => esc_html__( 'Recent Events', 'mainwp' ),
-			'log_plugins'       => esc_html__( 'Plugins', 'mainwp' ),
-			'log_themes'        => esc_html__( 'Themes', 'mainwp' ),
-			'log_sites'         => esc_html__( 'Sites', 'mainwp' ),
-			'log_posts'         => esc_html__( 'Posts', 'mainwp' ),
-			'log_pages'         => esc_html__( 'Pages', 'mainwp' ),
-			'log_users'         => esc_html__( 'Users', 'mainwp' ),
-			'log_clients'       => esc_html__( 'Clients', 'mainwp' ),
-			'log_graph_status'  => esc_html__( 'Status', 'mainwp' ),
-			'log_graph_php'     => esc_html__( 'PHP', 'mainwp' ),
-			'log_graph_wp'      => esc_html__( 'WordPress', 'mainwp' ),
-			'log_graph_themes'  => esc_html__( 'Themes', 'mainwp' ),
-			'log_graph_plugins' => esc_html__( 'Plugins', 'mainwp' ),
-			'log_graph_tags'    => esc_html__( 'Tags', 'mainwp' ),
-			'log_graph_clients' => esc_html__( 'Clients', 'mainwp' ),
+			'recent_events'     => esc_html__( 'Recent Activity Log', 'mainwp' ),
+			'log_plugins'       => esc_html__( 'Plugin Management Activity Overview', 'mainwp' ),
+			'log_themes'        => esc_html__( 'Themes Management Activity Overview', 'mainwp' ),
+			'log_sites'         => esc_html__( 'Site Management Activity Metrics', 'mainwp' ),
+			'log_posts'         => esc_html__( 'Posts Management Event Tracker', 'mainwp' ),
+			'log_pages'         => esc_html__( 'Page Management Event Tracker', 'mainwp' ),
+			'log_users'         => esc_html__( 'User Management Events Summary', 'mainwp' ),
+			'log_clients'       => esc_html__( 'Client Management Activity Summary', 'mainwp' ),
+			'log_graph_status'  => esc_html__( 'Site Connectivity Status', 'mainwp' ),
+			'log_graph_php'     => esc_html__( 'PHP Version Distribution', 'mainwp' ),
+			'log_graph_wp'      => esc_html__( 'WordPress Version Distribution', 'mainwp' ),
+			'log_graph_themes'  => esc_html__( 'Active Themes Overview', 'mainwp' ),
+			'log_graph_plugins' => esc_html__( 'Site Plugin Status Breakdown', 'mainwp' ),
+			'log_graph_tags'    => esc_html__( 'Tag Allocation Overview', 'mainwp' ),
+			'log_graph_clients' => esc_html__( 'Client Sites Distribution', 'mainwp' ),
 		);
 
 		$custom_opts = array();

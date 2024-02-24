@@ -194,6 +194,9 @@ class MainWP_Manage_Sites {
 
 		if ( isset( self::$subPages ) && is_array( self::$subPages ) ) {
 			foreach ( self::$subPages as $subPage ) {
+				if ( ! empty( $subPage['no_submenu_page'] ) ) {
+					continue;
+				}
 				if ( ! isset( $subPage['slug'] ) && ! isset( $subPage['title'] ) ) {
 					continue;
 				}

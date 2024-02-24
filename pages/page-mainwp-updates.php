@@ -153,9 +153,37 @@ class MainWP_Updates {
 			)
 		);
 
+		$updates_count = MainWP_Common_Handler::instance()->sites_available_updates_count();
+
+		$label_color_plugins      = '';
+		$label_color_themes       = '';
+		$label_color_wp           = '';
+		$label_color_translations = '';
+		$label_color_total        = '';
+
+		if ( isset( $updates_count['plugins'] ) && 0 < $updates_count['plugins'] ) {
+			$label_color_plugins = ' blue ';
+		}
+
+		if ( isset( $updates_count['wp'] ) && 0 < $updates_count['wp'] ) {
+			$label_color_wp = ' blue ';
+		}
+
+		if ( isset( $updates_count['themes'] ) && 0 < $updates_count['themes'] ) {
+			$label_color_themes = ' blue ';
+		}
+
+		if ( isset( $updates_count['translations'] ) && 0 < $updates_count['translations'] ) {
+			$label_color_translations = ' blue ';
+		}
+
+		if ( isset( $updates_count['total'] ) && 0 < $updates_count['total'] ) {
+			$label_color_total = ' blue ';
+		}
+
 		MainWP_Menu::add_left_menu(
 			array(
-				'title'         => esc_html__( 'Updates', 'mainwp' ),
+				'title'         => esc_html__( 'Updates', 'mainwp' ) . ' <span class="ui ' . $label_color_total . ' mini label">' . $updates_count['total'] . '</span>',
 				'parent_key'    => 'managesites',
 				'slug'          => 'UpdatesManage',
 				'href'          => 'admin.php?page=UpdatesManage',
@@ -172,83 +200,56 @@ class MainWP_Updates {
 
 			$init_sub_subleftmenu = array(
 				array(
-					'title'      => esc_html__( 'Plugins Updates', 'mainwp' ),
+					'title'      => esc_html__( 'Plugins Updates', 'mainwp' ) . ' <span class="ui' . $label_color_plugins . 'label">' . $updates_count['plugins'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=plugins-updates',
 					'slug'       => 'UpdatesManage',
 					'right'      => '',
 				),
 				array(
-					'title'      => esc_html__( 'Themes Updates', 'mainwp' ),
+					'title'      => esc_html__( 'Themes Updates', 'mainwp' ) . ' <span class="ui ' . $label_color_themes . ' label">' . $updates_count['themes'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=themes-updates',
 					'slug'       => 'UpdatesManage',
 					'right'      => '',
 				),
 				array(
-					'title'      => esc_html__( 'WordPress Updates', 'mainwp' ),
+					'title'      => esc_html__( 'WordPress Updates', 'mainwp' ) . ' <span class="ui ' . $label_color_wp . ' label">' . $updates_count['wp'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=wordpress-updates',
 					'slug'       => 'UpdatesManage&tab=wordpress-updates',
 					'right'      => '',
 				),
 				array(
-					'title'      => esc_html__( 'Translation Updates', 'mainwp' ),
+					'title'      => esc_html__( 'Translation Updates', 'mainwp' ) . ' <span class="ui ' . $label_color_translations . ' label">' . $updates_count['translations'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=translations-updates',
 					'slug'       => 'UpdatesManage&tab=translations-updates',
 					'right'      => '',
 				),
-				array(
-					'title'      => esc_html__( 'Abandoned Plugins', 'mainwp' ),
-					'parent_key' => 'UpdatesManage',
-					'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-plugins',
-					'slug'       => 'UpdatesManage&tab=abandoned-plugins',
-					'right'      => '',
-				),
-				array(
-					'title'      => esc_html__( 'Abandoned Themes', 'mainwp' ),
-					'parent_key' => 'UpdatesManage',
-					'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-themes',
-					'slug'       => 'UpdatesManage',
-					'right'      => '',
-				),
+				
 			);
 		} else {
 			$init_sub_subleftmenu = array(
 				array(
-					'title'      => esc_html__( 'Plugins Updates', 'mainwp' ),
+					'title'      => esc_html__( 'Plugins Updates', 'mainwp' ) . ' <span class="ui' . $label_color_plugins . 'label">' . $updates_count['plugins'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=plugins-updates',
 					'slug'       => 'UpdatesManage',
 					'right'      => '',
 				),
 				array(
-					'title'      => esc_html__( 'Themes Updates', 'mainwp' ),
+					'title'      => esc_html__( 'Themes Updates', 'mainwp' ) . ' <span class="ui' . $label_color_themes . 'label">' . $updates_count['themes'] . '</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=themes-updates',
 					'slug'       => 'UpdatesManage',
 					'right'      => '',
 				),
 				array(
-					'title'      => esc_html__( 'WordPress Updates', 'mainwp' ),
+					'title'      => esc_html__( 'WordPress Updates', 'mainwp' ) . ' <span class="ui' . $label_color_wp . 'label">' . $updates_count['wp'] . '1</span>',
 					'parent_key' => 'UpdatesManage',
 					'href'       => 'admin.php?page=UpdatesManage&tab=wordpress-updates',
 					'slug'       => 'UpdatesManage&tab=wordpress-updates',
-					'right'      => '',
-				),
-				array(
-					'title'      => esc_html__( 'Abandoned Plugins', 'mainwp' ),
-					'parent_key' => 'UpdatesManage',
-					'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-plugins',
-					'slug'       => 'UpdatesManage&tab=abandoned-plugins',
-					'right'      => '',
-				),
-				array(
-					'title'      => esc_html__( 'Abandoned Themes', 'mainwp' ),
-					'parent_key' => 'UpdatesManage',
-					'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-themes',
-					'slug'       => 'UpdatesManage',
 					'right'      => '',
 				),
 			);

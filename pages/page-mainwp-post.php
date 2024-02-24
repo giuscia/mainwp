@@ -384,18 +384,20 @@ class MainWP_Post {
 
 		$init_sub_subleftmenu = array(
 			array(
-				'title'      => esc_html__( 'Manage Posts', 'mainwp' ),
-				'parent_key' => 'PostBulkManage',
-				'href'       => 'admin.php?page=PostBulkManage',
-				'slug'       => 'PostBulkManage',
-				'right'      => 'manage_posts',
+				'title'                => esc_html__( 'Manage Posts', 'mainwp' ),
+				'parent_key'           => 'PostBulkManage',
+				'href'                 => 'admin.php?page=PostBulkManage',
+				'slug'                 => 'PostBulkManage',
+				'right'                => 'manage_posts',
+				'leftsub_order_level2' => 1,
 			),
 			array(
-				'title'      => esc_html__( 'Add New', 'mainwp' ),
-				'parent_key' => 'PostBulkManage',
-				'href'       => 'admin.php?page=PostBulkAdd',
-				'slug'       => 'PostBulkAdd',
-				'right'      => 'manage_posts',
+				'title'                => esc_html__( 'Add New', 'mainwp' ),
+				'parent_key'           => 'PostBulkManage',
+				'href'                 => 'admin.php?page=PostBulkAdd',
+				'slug'                 => 'PostBulkAdd',
+				'right'                => 'manage_posts',
+				'leftsub_order_level2' => 2,
 			),
 		);
 		MainWP_Menu::init_subpages_left_menu( $subPages, $init_sub_subleftmenu, 'PostBulkManage', 'Post' );

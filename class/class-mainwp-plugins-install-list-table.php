@@ -517,7 +517,7 @@ class MainWP_Plugins_Install_List_Table extends \WP_List_Table {
 					);
 					?>
 					</div>
-						<div class="twelve wide right aligned column"><strong><?php esc_html_e( 'Updated: ', 'mainwp' ); ?></strong><?php printf( esc_html__( '%s ago', 'mainwp' ), human_time_diff( $last_updated_timestamp ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+						<div class="twelve wide right aligned column"><span class="ui small text"><?php esc_html_e( 'Updated: ', 'mainwp' ); ?><?php printf( esc_html__( '%s ago', 'mainwp' ), human_time_diff( $last_updated_timestamp ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span></div>
 					</div>
 				</div>
 					<div class="extra content">

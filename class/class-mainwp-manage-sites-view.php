@@ -105,34 +105,30 @@ class MainWP_Manage_Sites_View {
 
 		$items_menu = array(
 			array(
-				'title'      => esc_html__( 'Manage Sites', 'mainwp' ),
-				'parent_key' => 'managesites',
-				'slug'       => 'managesites',
-				'href'       => 'admin.php?page=managesites',
-				'right'      => '',
+				'title'                => esc_html__( 'Manage Sites', 'mainwp' ),
+				'parent_key'           => 'managesites',
+				'slug'                 => 'managesites',
+				'href'                 => 'admin.php?page=managesites',
+				'right'                => '',
+				'leftsub_order_level2' => 1,
 			),
 			array(
-				'title'      => esc_html__( 'Add New', 'mainwp' ),
-				'parent_key' => 'managesites',
-				'href'       => 'admin.php?page=managesites&do=new',
-				'slug'       => 'managesites',
-				'right'      => 'add_sites',
-				'item_slug'  => 'managesites_add_new',
+				'title'                => esc_html__( 'Add New', 'mainwp' ),
+				'parent_key'           => 'managesites',
+				'href'                 => 'admin.php?page=managesites&do=new',
+				'slug'                 => 'managesites',
+				'right'                => 'add_sites',
+				'item_slug'            => 'managesites_add_new',
+				'leftsub_order_level2' => 2,
 			),
 			array(
-				'title'      => esc_html__( 'Import Sites', 'mainwp' ),
-				'parent_key' => 'managesites',
-				'href'       => 'admin.php?page=managesites&do=bulknew',
-				'slug'       => 'managesites',
-				'right'      => 'add_sites',
-				'item_slug'  => 'managesites_import',
-			),
-			array(
-				'title'      => esc_html__( 'Monitoring', 'mainwp' ),
-				'parent_key' => 'managesites',
-				'href'       => 'admin.php?page=MonitoringSites',
-				'slug'       => 'MonitoringSites',
-				'right'      => '',
+				'title'                => esc_html__( 'Import Sites', 'mainwp' ),
+				'parent_key'           => 'managesites',
+				'href'                 => 'admin.php?page=managesites&do=bulknew',
+				'slug'                 => 'managesites',
+				'right'                => 'add_sites',
+				'item_slug'            => 'managesites_import',
+				'leftsub_order_level2' => 3,
 			),
 		);
 
@@ -267,17 +263,17 @@ class MainWP_Manage_Sites_View {
 		$pagetitle = esc_html__( 'Sites', 'mainwp' );
 
 		if ( ! empty( $site_id ) ) {
-			$website = MainWP_DB::instance()->get_website_by_id( $site_id );
+			$website   = MainWP_DB::instance()->get_website_by_id( $site_id );
 			$reconnect = '';
 			if ( $site_id && $website && '' !== $website->sync_errors ) {
-				$reconnect = '<a href="#" class="mainwp-updates-overview-reconnect-site item" siteid="' . intval( $site_id ) .'"><i class="sync alternate icon"></i> Reconnect</a>';
+				$reconnect = '<a href="#" class="mainwp-updates-overview-reconnect-site item" siteid="' . intval( $site_id ) . '"><i class="sync alternate icon"></i> Reconnect</a>';
 			}
 			$wp_admin_href = MainWP_Site_Open::get_open_site_url( $site_id, false, false );
-			$dropdown = $reconnect . '
+			$dropdown      = $reconnect . '
 			<a class="item mainwp-remove-site-button" site-id="' . intval( $site_id ) . '" id="mainwp-remove-site-button" href="#"><i class="trash alternate icon"></i> Remove Site</a>
 			<a id="mainwp-go-wp-admin-button" target="_blank" href="' . $wp_admin_href . '" class="item open_newwindow_wpadmin"><i class="sign in icon"></i> Go to WP Admin</a>
 			';
-			$imgfavi = '';
+			$imgfavi       = '';
 			if ( 1 === (int) get_option( 'mainwp_use_favicon', 1 ) ) {
 				$favi_url = MainWP_Connect::get_favico_url( $website );
 				if ( false !== $favi_url ) {
@@ -364,13 +360,18 @@ class MainWP_Manage_Sites_View {
 				if ( isset( $subPage['sitetab'] ) && true === $subPage['sitetab'] && empty( $site_id ) ) {
 					continue;
 				}
-				$item           = array();
-				$item['title']  = $subPage['title'];
-				$item['href']   = 'admin.php?page=ManageSites' . $subPage['slug'] . ( $site_id ? '&id=' . esc_attr( $site_id ) : '' );
-				$item['active'] = ( $subPage['slug'] === $shownPage ) ? true : false;
+				$item          = array();
+				$item['title'] = $subPage['title'];
+				if ( ! empty( $subPage['href'] ) ) {
+					$item['href'] = $subPage['href'];
+				} else {
+					$item['href'] = 'admin.php?page=ManageSites' . $subPage['slug'] . ( $site_id ? '&id=' . esc_attr( $site_id ) : '' );
+				}
+				$item['active'] = isset( $subPage['slug'] ) && ( $subPage['slug'] === $shownPage ) ? true : false;
 				$renderItems[]  = $item;
 			}
 		}
+		$renderItems = apply_filters( 'mainwp_manage_sites_navigation_items', $renderItems, $site_id, $shownPage );
 		MainWP_UI::render_page_navigation( $renderItems );
 	}
 

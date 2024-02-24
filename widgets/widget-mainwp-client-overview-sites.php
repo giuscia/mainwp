@@ -591,9 +591,9 @@ class MainWP_Client_Overview_Sites {
 			<?php if ( 'status' === $column_name ) { ?>
 				<td class="center aligned collapsing">
 					<?php if ( $hasSyncErrors ) : ?>
-						<span><a class="mainwp_site_reconnect" href="#"><i class="circular inverted red unlink icon"></i></a></span>
+						<a class="mainwp_site_reconnect" href="#"><i class="circular inverted red unlink icon"></i></a>
 					<?php else : ?>
-						<span><a class="managesites_syncdata" href="#"><?php echo '1' === $website['suspended'] ? '<i class="pause circular yellow inverted circle icon"></i>' : '<i class="circular inverted green check icon"></i>'; ?></a></span>
+						<a class="managesites_syncdata" href="#"><?php echo '1' === $website['suspended'] ? '<i class="pause circular yellow inverted circle icon"></i>' : '<i class="circular inverted green check icon"></i>'; ?></a>
 					<?php endif; ?>
 				</td>
 				<?php

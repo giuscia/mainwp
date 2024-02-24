@@ -80,7 +80,8 @@ class MainWP_Api_Manager_Key {
 	public function activate( $args ) {
 
 		$defaults = array(
-			'request' => 'softwareactivation',
+			'request'           => 'softwareactivation',
+			'dashboard_version' => MainWP_System::instance()->get_dashboard_version(),
 		);
 
 		$args = wp_parse_args( $defaults, $args );
@@ -94,6 +95,7 @@ class MainWP_Api_Manager_Key {
 			)
 		);
 
+		
 		if ( is_wp_error( $request ) || 200 !== wp_remote_retrieve_response_code( $request ) ) {
 
 			return false;
@@ -118,7 +120,8 @@ class MainWP_Api_Manager_Key {
 	public function deactivate( $args ) {
 
 		$defaults = array(
-			'request' => 'deactivate', // old: wc-api/deactivation.
+			'request'           => 'deactivate', // old: wc-api/deactivation.
+			'dashboard_version' => MainWP_System::instance()->get_dashboard_version(),
 		);
 
 		$args = wp_parse_args( $defaults, $args );
@@ -156,7 +159,8 @@ class MainWP_Api_Manager_Key {
 	public function grab_api_key( $args ) {
 
 		$defaults = array(
-			'request' => 'grabapikey',
+			'request'           => 'grabapikey',
+			'dashboard_version' => MainWP_System::instance()->get_dashboard_version(),
 		);
 
 		$args = wp_parse_args( $defaults, $args );
@@ -169,7 +173,7 @@ class MainWP_Api_Manager_Key {
 				'sslverify' => self::$apisslverify,
 			)
 		);
-
+		
 		if ( is_wp_error( $request ) || 200 !== wp_remote_retrieve_response_code( $request ) ) {
 			// Request failed.
 			return false;
@@ -212,13 +216,6 @@ class MainWP_Api_Manager_Key {
 				'sslverify' => self::$apisslverify,
 			)
 		);
-
-		$log = $request;
-		if ( is_array( $log ) && isset( $log['http_response'] ) ) {
-			unset( $log['http_response'] );
-		}
-
-		MainWP_Logger::instance()->debug( 'verify_api_key:: RESULT :: ' . MainWP_Utility::value_to_string( $log, true ) );
 
 		if ( is_wp_error( $request ) ) {
 			if ( 1 === (int) self::$apisslverify ) {

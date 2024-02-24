@@ -85,7 +85,7 @@ class Log_Settings {
 	 */
 	public function add_subpage_menu_settings( $subpages = array() ) {
 		$subpages[] = array(
-			'title'    => esc_html__( 'Dashboard Insights - BETA', 'mainwp' ),
+			'title'    => esc_html__( 'Dashboard Insights', 'mainwp' ),
 			'slug'     => 'Insights',
 			'callback' => array( $this, 'render_settings_page' ),
 			'class'    => '',

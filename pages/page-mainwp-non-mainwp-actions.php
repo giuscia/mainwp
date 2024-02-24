@@ -102,10 +102,9 @@ class MainWP_Non_MainWP_Actions {
 				'href'          => 'admin.php?page=NonMainWPChanges',
 				'icon'          => '<i class="pie chart icon"></i>',
 				'desc'          => 'Non-MainWP Changes Overview',
-				'nosubmenu'     => true,
-				'leftsub_order' => 8.5,
+				'leftsub_order_level2' => 3.5,
 			),
-			1
+			2
 		);
 	}
 

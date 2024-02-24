@@ -122,7 +122,7 @@ class Rest_Api {
 	 */
 	public function mainwp_authentication_error() {
 
-		$data = array( 'ERROR' => esc_html__( 'Incorrect or missing consumer key and/or secret. If the issue persists please reset your authentication details from the MainWP > Settings > REST API page, on your MainWP Dashboard site.', 'mainwp-jetpack-scan-extension' ) );
+		$data = array( 'ERROR' => esc_html__( 'Incorrect or missing consumer key and/or secret. If the issue persists please reset your authentication details from the MainWP > Settings > REST API page, on your MainWP Dashboard site.', 'mainwp' ) );
 
 		$response = new \WP_REST_Response( $data );
 		$response->set_status( 401 );
@@ -139,7 +139,7 @@ class Rest_Api {
 	 */
 	public function mainwp_missing_data_error() {
 
-		$data = array( 'ERROR' => esc_html__( 'Required parameter is missing.', 'mainwp-jetpack-scan-extension' ) );
+		$data = array( 'ERROR' => esc_html__( 'Required parameter is missing.', 'mainwp' ) );
 
 		$response = new \WP_REST_Response( $data );
 		$response->set_status( 400 );
@@ -156,7 +156,7 @@ class Rest_Api {
 	 */
 	public function mainwp_invalid_data_error() {
 
-		$data = array( 'ERROR' => esc_html__( 'Required parameter data is is not valid.', 'mainwp-jetpack-scan-extension' ) );
+		$data = array( 'ERROR' => esc_html__( 'Required parameter data is is not valid.', 'mainwp' ) );
 
 		$response = new \WP_REST_Response( $data );
 		$response->set_status( 400 );

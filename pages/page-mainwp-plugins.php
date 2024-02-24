@@ -249,6 +249,7 @@ class MainWP_Plugins {
 				'href'       => 'admin.php?page=PluginsManage',
 				'slug'       => 'PluginsManage',
 				'right'      => '',
+				'leftsub_order_level2' => 1,
 			),
 			array(
 				'title'      => esc_html__( 'Install Plugins', 'mainwp' ),
@@ -256,6 +257,7 @@ class MainWP_Plugins {
 				'href'       => 'admin.php?page=PluginsInstall',
 				'slug'       => 'PluginsInstall',
 				'right'      => 'install_plugins',
+				'leftsub_order_level2' => 2,
 			),
 			array(
 				'title'      => esc_html__( 'Advanced Auto Updates', 'mainwp' ),
@@ -263,6 +265,7 @@ class MainWP_Plugins {
 				'href'       => 'admin.php?page=PluginsAutoUpdate',
 				'slug'       => 'PluginsAutoUpdate',
 				'right'      => '',
+				'leftsub_order_level2' => 3,
 			),
 			array(
 				'title'      => esc_html__( 'Ignored Updates', 'mainwp' ),
@@ -270,6 +273,15 @@ class MainWP_Plugins {
 				'href'       => 'admin.php?page=PluginsIgnore',
 				'slug'       => 'PluginsIgnore',
 				'right'      => '',
+				'leftsub_order_level2' => 4,
+			),
+			array(
+				'title'      => esc_html__( 'Abandoned Plugins', 'mainwp' ),
+				'parent_key' => 'PluginsManage',
+				'href'       => 'admin.php?page=UpdatesManage&tab=abandoned-plugins',
+				'slug'       => 'PluginsManage&tab=abandoned-plugins',
+				'right'      => '',
+				'leftsub_order_level2' => 4.1,
 			),
 			array(
 				'title'      => esc_html__( 'Ignored Abandoned', 'mainwp' ),
@@ -277,7 +289,9 @@ class MainWP_Plugins {
 				'href'       => 'admin.php?page=PluginsIgnoredAbandoned',
 				'slug'       => 'PluginsIgnoredAbandoned',
 				'right'      => '',
+				'leftsub_order_level2' => 5,
 			),
+			
 		);
 
 		MainWP_Menu::init_subpages_left_menu( $subPages, $init_sub_subleftmenu, 'PluginsManage', 'Plugins' );

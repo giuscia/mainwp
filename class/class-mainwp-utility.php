@@ -22,7 +22,8 @@ class MainWP_Utility {
 	 * @static
 	 * @var boolean $enabled_wp_seo If Yoast SEO is enabled return true else return null.
 	 */
-	public static $enabled_wp_seo = null;
+	public static $enabled_wp_seo          = null;
+	public static $last_deactivated_alerts = null;
 
 	/**
 	 * Private static variable to hold the single instance of the class.
@@ -1395,5 +1396,30 @@ class MainWP_Utility {
 		}
 		$result = array_intersect_key( $right_array, $left_array );
 		return array_merge( $left_array, $result );
+	}
+
+
+	/**
+	 * Method get_set_deactivated_licenses_alerted().
+	 *
+	 * @param  string $slug Extension slug.
+	 * @param  bool   $time_value Time value.
+	 * @param  string $act get/set value.
+	 *
+	 * @return array $result result array.
+	 */
+	public function get_set_deactivated_licenses_alerted( $slug, $time_value = false, $act = 'get' ) {
+		if ( null === $this->last_deactivated_alerts ) {
+			$this->last_deactivated_alerts = get_option( 'mainwp_cron_licenses_deactivated_alerted', array() );
+			if ( ! is_array( $this->last_deactivated_alerts ) ) {
+				$this->last_deactivated_alerts = array();
+			}
+		}
+		if ( 'get' === $act ) {
+			return isset( $this->last_deactivated_alerts[ $slug ] ) ? $this->last_deactivated_alerts[ $slug ] : 0;
+		} elseif ( 'set' === $act ) {
+			$this->last_deactivated_alerts[ $slug ] = intval( $time_value );
+			get_option( 'mainwp_cron_licenses_deactivated_alerted', $this->last_deactivated_alerts );
+		}
 	}
 }

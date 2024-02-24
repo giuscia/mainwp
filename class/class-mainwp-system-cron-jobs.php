@@ -67,6 +67,7 @@ class MainWP_System_Cron_Jobs {
 		add_action( 'mainwp_cronpingchilds_action', array( $this, 'cron_ping_childs' ) );
 		add_action( 'mainwp_croncheckstatus_action', array( $this, 'cron_check_websites_status' ) );
 		add_action( 'mainwp_cronsitehealthcheck_action', array( $this, 'cron_check_websites_health' ) );
+		add_action( 'mainwp_crondeactivatedlicensesalert_action', array( $this, 'cron_deactivated_licenses_alert' ) );
 
 		// phpcs:ignore -- required for dashboard's minutely scheduled jobs.
 		add_filter( 'cron_schedules', array( $this, 'get_cron_schedules' ), 9 );
@@ -86,9 +87,10 @@ class MainWP_System_Cron_Jobs {
 
 		// Default Cron Jobs.
 		$jobs = array(
-			'mainwp_cronreconnect_action'    => 'hourly',
-			'mainwp_cronpingchilds_action'   => 'daily',
-			'mainwp_cronupdatescheck_action' => 'minutely',
+			'mainwp_cronreconnect_action'                => 'hourly',
+			'mainwp_cronpingchilds_action'               => 'daily',
+			'mainwp_cronupdatescheck_action'             => 'minutely',
+			'mainwp_crondeactivatedlicensesalert_action' => 'daily',
 		);
 
 		$disableChecking = get_option( 'mainwp_disableSitesChecking', 1 );
@@ -1442,6 +1444,39 @@ class MainWP_System_Cron_Jobs {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Method cron_deactivated_licenses_alert()
+	 */
+	public function cron_deactivated_licenses_alert() {
+		$admin_email_settings = MainWP_Notification_Settings::get_default_emails_fields( 'deactivated_license_alert' );
+		if ( empty( $admin_email_settings['disable'] ) && ! empty( $admin_email_settings['recipients'] ) ) {
+			$deactivated_licenses = MainWP_Extensions_Handler::get_indexed_extensions_infor( false, true );
+			if ( ! empty( $deactivated_licenses ) ) {
+				$alerts_now = array();
+				foreach ( $deactivated_licenses as $slug => $info ) {
+					if ( ! empty( $info['mainwp_version'] ) ) { // alert for versions 5 only.
+						$alerted = MainWP_Utility::instance()->get_set_deactivated_licenses_alerted( $slug );
+						if ( empty( $alerted ) ) {
+							$alerts_now[ $slug ] = $info;
+							MainWP_Utility::instance()->get_set_deactivated_licenses_alerted( $slug, time(), 'set' );
+						}
+					}
+				}
+
+				if ( ! empty( $alerts_now ) ) {
+					$plain_text = get_option( 'mainwp_license_deactivated_alert_plain_text', false );
+					$filtered   = apply_filters( 'mainwp_license_deactivated_alert_plain_text', $plain_text );
+					if ( $plain_text !== $filtered ) {
+						$plain_text = $filtered;
+						MainWP_Utility::update_option( 'mainwp_license_deactivated_alert_plain_text', $plain_text );
+					}
+					MainWP_Notification::send_license_deactivated_alert( $admin_email_settings, $alerts_now, $plain_text );
+					MainWP_Utility::update_option( 'mainwp_cron_license_deactivated_alert_lasttime', time() );
+				}
+			}
+		}
 	}
 
 	/**

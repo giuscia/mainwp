@@ -237,13 +237,47 @@ class MainWP_Extensions_Handler {
 	}
 
 	/**
+	 * Get not installed MainWP Extensions.
+	 *
+	 * @return array Array of not installed Extensions.
+	 */
+	public static function get_extensions_not_installed() {
+		$all_available_extensions = MainWP_Extensions_View::get_available_extensions( 'all' );
+
+		$all_plugins = get_plugins();
+
+		$installed_slugs = array();
+		foreach ( $all_plugins as $plugin => $plugin_data ) {
+			$slug = dirname( $plugin );
+			if ( ! isset( $installed_slugs[ $slug ] ) ) {
+				$installed_slugs[] = $slug;
+			}
+		}
+
+		$exts_not_installed = array();
+		foreach ( $all_available_extensions as $slug => $info ) {
+			if ( ! in_array( $slug, $installed_slugs ) ) {
+				$exts_not_installed[ $slug ] = array(
+					'name' => $info['title'],
+					'slug' => $info['slug'],
+					'link' => $info['link'],
+					'img'  => isset( $info['img'] ) ? $info['img'] : '',
+					'description' => isset( $info['desc'] ) ? $info['desc'] : '',
+				);
+			}
+		}
+		return $exts_not_installed;
+	}
+
+	/**
 	 * Get MainWP Extensions infor array.
 	 *
 	 * @param array $args Empty Array.
+	 * @param bool  $deactivated_license Get extensions that deactivated license or not.
 	 *
 	 * @return array Array of Extensions.
 	 */
-	public static function get_indexed_extensions_infor( $args = array() ) {
+	public static function get_indexed_extensions_infor( $args = array(), $deactivated_license = null ) {
 		if ( ! is_array( $args ) ) {
 			$args = array();
 		}
@@ -257,13 +291,26 @@ class MainWP_Extensions_Handler {
 					}
 				}
 			}
-			$ext            = array();
-			$ext['version'] = $extension['version'];
-			$ext['name']    = $extension['name'];
-			$ext['page']    = $extension['page'];
+			$apiManager        = isset( $extension['apiManager'] ) && $extension['apiManager'] ? true : false;
+			$ext               = array();
+			$ext['version']    = $extension['version'];
+			$ext['apiManager'] = $apiManager;
+			$ext['name']       = $extension['name'];
+			$ext['page']       = $extension['page'];
+			$ext['mainwp_version'] = isset( $extension['mainwp_version'] ) ? $extension['mainwp_version'] : '';
+
 			if ( isset( $extension['activated_key'] ) && 'Activated' === $extension['activated_key'] ) {
 				$ext['activated_key'] = 'Activated';
 			}
+
+			if ( null !== $deactivated_license ) {
+				if ( $deactivated_license && $apiManager && isset( $ext['activated_key'] ) && 'Activated' === $ext['activated_key'] ) {
+					continue; // get deactivated license, skip activated license.
+				} elseif ( ! $deactivated_license && ( ! isset( $ext['activated_key'] ) || 'Activated' !== $ext['activated_key'] ) ) {
+					continue; // get activated license, so skip deactivated license.
+				}
+			}
+
 			$return[ $extension['slug'] ] = $ext;
 		}
 		return $return;
@@ -840,7 +887,7 @@ class MainWP_Extensions_Handler {
 			$tmp2 = MainWP_Utility::remove_http_www_prefix( $clone_url );
 
 			if ( false === strpos( $tmp2, $tmp1 ) ) {
-					return false;
+				return false;
 			}
 
 			$clone_sites = MainWP_DB::instance()->get_websites_by_url( $clone_url );

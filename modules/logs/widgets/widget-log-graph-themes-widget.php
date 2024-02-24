@@ -158,11 +158,11 @@ class Log_Graph_Themes_Widget {
 								colors: '#999999',
 							}
 						}
-					}
+					},
 					tooltip: {
 						theme: 'dark'
 					},
-				},
+				}
 				var theme = new ApexCharts(document.querySelector("#mainwp-module-log-chart-themes-wrapper"), options);
 				setTimeout(() => {
 					theme.render();

@@ -1055,22 +1055,22 @@ class MainWP_Monitoring_Sites_List_Table extends MainWP_Manage_Sites_List_Table 
 			<?php } elseif ( 'status' === $column_name ) { ?>
 				<td class="center aligned collapsing">
 					<?php if ( $statusUndefined ) : ?>
-						<span><a href="#"><i class="circular inverted exclamation red icon"></i></a></span>
+						<a href="#"><i class="circular inverted exclamation red icon"></i></a>
 						<?php
 					elseif ( $statusOnline ) :
 						if ( ! $good_health ) {
 							?>
-							<span><i class="circular inverted yellow heartbeat icon"></i></span>
+							<i class="circular inverted yellow heartbeat icon"></i>
 							<?php
 						} else {
 							?>
-							<span><i class="circular inverted green check icon"></i></span>
+							<i class="circular inverted green check icon"></i>
 							<?php
 						}
 						?>
 
 					<?php else : ?>
-						<span><a href="#"><i class="circular inverted exclamation red icon"></i></a></span>
+						<a href="#"><i class="circular inverted exclamation red icon"></i></a>
 						<?php
 					endif;
 					?>
@@ -1240,21 +1240,21 @@ class MainWP_Monitoring_Sites_List_Table extends MainWP_Manage_Sites_List_Table 
 							<div class="ui checkbox"><input type="checkbox" value="<?php echo intval( $website['id'] ); ?>" /></div>
 							<?php } elseif ( 'status' === $column_name ) { ?>
 								<?php if ( $statusUndefined ) : ?>
-									<span><a href="#"><i class="circular inverted exclamation red icon"></i></a></span>
+									<a href="#"><i class="circular inverted exclamation red icon"></i></a>
 									<?php
 								elseif ( $statusOnline ) :
 									if ( ! $good_health ) {
 										?>
-									<span><i class="circular inverted yellow heartbeat icon"></i></span>
+									<i class="circular inverted yellow heartbeat icon"></i>
 										<?php
 									} else {
 										?>
-									<span><i class="circular green check inverted icon"></i></span>
+									<i class="circular green check inverted icon"></i>
 										<?php
 									}
 									?>
 								<?php else : ?>
-									<span><a href="#"><i class="circular inverted exclamation red icon"></i></a></span>
+									<a href="#"><i class="circular inverted exclamation red icon"></i></a>
 								<?php endif; ?>
 
 							<?php } elseif ( 'favicon' === $column_name ) { ?>

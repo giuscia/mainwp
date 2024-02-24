@@ -236,25 +236,28 @@ class MainWP_Client {
 
 		$init_sub_subleftmenu = array(
 			array(
-				'title'      => esc_html__( 'Clients', 'mainwp' ),
-				'parent_key' => 'ManageClients',
-				'href'       => 'admin.php?page=ManageClients',
-				'slug'       => 'ManageClients',
-				'right'      => 'manage_clients',
+				'title'                => esc_html__( 'Clients', 'mainwp' ),
+				'parent_key'           => 'ManageClients',
+				'href'                 => 'admin.php?page=ManageClients',
+				'slug'                 => 'ManageClients',
+				'right'                => 'manage_clients',
+				'leftsub_order_level2' => 1,
 			),
 			array(
-				'title'      => esc_html__( 'Add Client', 'mainwp' ),
-				'parent_key' => 'ManageClients',
-				'href'       => 'admin.php?page=ClientAddNew',
-				'slug'       => 'ClientAddNew',
-				'right'      => '',
+				'title'                => esc_html__( 'Add Client', 'mainwp' ),
+				'parent_key'           => 'ManageClients',
+				'href'                 => 'admin.php?page=ClientAddNew',
+				'slug'                 => 'ClientAddNew',
+				'right'                => '',
+				'leftsub_order_level2' => 2,
 			),
 			array(
-				'title'      => esc_html__( 'Client Fields', 'mainwp' ),
-				'parent_key' => 'ManageClients',
-				'href'       => 'admin.php?page=ClientAddField',
-				'slug'       => 'ClientAddField',
-				'right'      => '',
+				'title'                => esc_html__( 'Client Fields', 'mainwp' ),
+				'parent_key'           => 'ManageClients',
+				'href'                 => 'admin.php?page=ClientAddField',
+				'slug'                 => 'ClientAddField',
+				'right'                => '',
+				'leftsub_order_level2' => 3,
 			),
 		);
 

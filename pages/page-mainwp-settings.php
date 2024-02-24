@@ -96,31 +96,33 @@ class MainWP_Settings {
 			$new_extensions = array();
 			$extensions     = get_option( 'mainwp_extensions', array() );
 
-			foreach ( $extensions as $ext ) {
-				if ( isset( $ext['api'] ) && isset( $ext['apiManager'] ) && ! empty( $ext['apiManager'] ) ) {
-					if ( isset( $ext['api_key'] ) ) {
-						$ext['api_key'] = '';
-					}
-					if ( isset( $ext['activation_email'] ) ) {
-						$ext['activation_email'] = '';
-					}
-					if ( isset( $ext['activated_key'] ) ) {
-						$ext['activated_key'] = 'Deactivated';
-					}
+			if ( is_array( $extensions ) ) {
+				foreach ( $extensions as $ext ) {
+					if ( isset( $ext['api'] ) && isset( $ext['apiManager'] ) && ! empty( $ext['apiManager'] ) ) {
+						if ( isset( $ext['api_key'] ) ) {
+							$ext['api_key'] = '';
+						}
+						if ( isset( $ext['activation_email'] ) ) {
+							$ext['activation_email'] = '';
+						}
+						if ( isset( $ext['activated_key'] ) ) {
+							$ext['activated_key'] = 'Deactivated';
+						}
 
-					$act_info = MainWP_Api_Manager::instance()->get_activation_info( $ext['api'] );
-					if ( isset( $act_info['api_key'] ) ) {
-						$act_info['api_key'] = '';
+						$act_info = MainWP_Api_Manager::instance()->get_activation_info( $ext['api'] );
+						if ( isset( $act_info['api_key'] ) ) {
+							$act_info['api_key'] = '';
+						}
+						if ( isset( $act_info['activation_email'] ) ) {
+							$act_info['activation_email'] = '';
+						}
+						if ( isset( $act_info['activated_key'] ) ) {
+							$act_info['activated_key'] = 'Deactivated';
+						}
+						MainWP_Api_Manager::instance()->set_activation_info( $ext['api'], $act_info );
 					}
-					if ( isset( $act_info['activation_email'] ) ) {
-						$act_info['activation_email'] = '';
-					}
-					if ( isset( $act_info['activated_key'] ) ) {
-						$act_info['activated_key'] = 'Deactivated';
-					}
-					MainWP_Api_Manager::instance()->set_activation_info( $ext['api'], $act_info );
+					$new_extensions[] = $ext;
 				}
-				$new_extensions[] = $ext;
 			}
 
 			MainWP_Utility::update_option( 'mainwp_extensions', $new_extensions );

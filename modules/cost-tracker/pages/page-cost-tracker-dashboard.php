@@ -202,9 +202,11 @@ class Cost_Tracker_Dashboard {
 							<option value="delete-sub"><?php esc_html_e( 'Delete', 'mainwp' ); ?></option>
 						</select>
 						<input type="button" name="mainwp_module_cost_tracker_action_btn" id="mainwp_module_cost_tracker_action_btn" class="ui basic mini button" value="<?php esc_html_e( 'Apply', 'mainwp' ); ?>"/>
-				<?php do_action( 'mainwp_module_cost_tracker_actions_bar_left' ); ?>
+						<?php do_action( 'mainwp_module_cost_tracker_actions_bar_left' ); ?>
 					</div>
-				<div class="right aligned middle aligned column"></div>
+				<div class="right aligned middle aligned column">
+				<?php do_action( 'mainwp_module_cost_tracker_actions_bar_right' ); ?>
+				</div>
 			</div>
 		</div>
 		<?php

@@ -1058,13 +1058,17 @@ class MainWP_System_Handler {
 	 * Deactivate MaiNWP Extension.
 	 *
 	 * @param mixed $ext_key Exnension API Key.
+	 * @param bool  $dashboard_only Deactive API Key on dashboard only.
+	 * @param array $params Deactive params.
 	 *
 	 * @uses \MainWP\Dashboard\MainWP_Api_Manager::set_activation_info()
 	 */
-	public function deactivate_extension( $ext_key ) {
+	public function deactivate_extension( $ext_key, $dashboard_only = false, $params = array() ) {
 		// try to deactivate license.
-		$mainwp_api_key = MainWP_Api_Manager_Key::instance()->get_decrypt_master_api_key();
-		$result         = MainWP_Api_Manager::instance()->license_key_deactivation( $ext_key, $mainwp_api_key );
+		if ( ! $dashboard_only ) {
+			$mainwp_api_key = MainWP_Api_Manager_Key::instance()->get_decrypt_master_api_key();
+			$result         = MainWP_Api_Manager::instance()->license_key_deactivation( $ext_key, $mainwp_api_key );
+		}
 
 		MainWP_Api_Manager::instance()->remove_activation_info( $ext_key );
 	}

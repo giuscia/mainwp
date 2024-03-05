@@ -323,16 +323,18 @@ jQuery(document).ready(function () {
 	// Trigger action_delete_backup.
 	jQuery('.mainwp_3rd_party_api_kinsta_action_delete_backup').on('click', function (event) {
 		var confirmMsg = __('Are you sure you want to Delete this backup?');
+		let backupId = jQuery(this).attr('backup_id');
 		mainwp_confirm(confirmMsg, function () {
-			kinsta_action_delete_backup(this, event);
+			kinsta_action_delete_backup(this, backupId, event);
 		});
 	});
 
 	// Trigger action_restore_backup.
 	jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').on('click', function (event) {
 		var confirmMsg = __('Are you sure you want to Restore this backup?');
+		let backupId = jQuery(this).attr('backup_id');
 		mainwp_confirm(confirmMsg, function () {
-			kinsta_action_restore_backup(this, event);
+			kinsta_action_restore_backup(this, backupId, event);
 		});
 	});
 
@@ -2448,18 +2450,11 @@ kinsta_action_create_backup = function (pObj) {
 };
 
 // Delete Manual Backup.
-kinsta_action_delete_backup = function (pObj) {
-
-	var websiteId = jQuery('.mainwp_3rd_party_api_kinsta_action_delete_backup').attr('website_id');
-	var backupId = jQuery('.mainwp_3rd_party_api_kinsta_action_delete_backup').attr('backup_id');
-	var envId = jQuery('.mainwp_3rd_party_api_kinsta_action_delete_backup').attr('environment_id');
-
+kinsta_action_delete_backup = function (pObj, backupId) {
 
 	var data = mainwp_secure_data({
 		action: 'kinsta_action_delete_backup',
-		website_id: websiteId,
 		backup_id: backupId,
-		environment_id: envId,
 		backup_api: 'kinsta'
 	});
 
@@ -2501,21 +2496,15 @@ kinsta_action_delete_backup = function (pObj) {
 };
 
 // Delete Manual Backup.
-kinsta_action_restore_backup = function (pObj) {
+kinsta_action_restore_backup = function (pObj, backupId) {
 
 	var websiteId = jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').attr('website_id');
-	var backupId = jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').attr('backup_id');
-	var envId = jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').attr('environment_id');
-	var backupName = jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').attr('backup_name');
-
 
 	var data = mainwp_secure_data({
 		action: 'kinsta_action_restore_backup',
-		website_id: websiteId,
 		backup_id: backupId,
-		environment_id: envId,
-		backup_name: backupName,
-		backup_api: 'kinsta'
+		backup_api: 'kinsta',
+		website_id: websiteId
 	});
 
 	// Start button animation.

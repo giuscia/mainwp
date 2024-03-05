@@ -185,7 +185,7 @@ class Api_Backups_Utility {
 	 */
 	public static function save_lasttime_backup( $site_id, $available_backups, $backup_api ) {
 
-		self::log_debug( 'save backup time :: [available backups=' . ( is_string( $available_backups ) ? $available_backups : 'is not string' ) . ']' );
+		//self::log_debug( 'save backup time :: [available backups=' . ( is_string( $available_backups ) ? $available_backups : 'is not string' ) . ']' );
 
 		if ( empty( $available_backups ) ) {
 			return;
@@ -208,6 +208,20 @@ class Api_Backups_Utility {
 				foreach ( $available_backups as $backup ) {
 					if ( is_object( $backup ) && ! empty( $backup->value->createdAt->value ) ) {
 						$backup_time = strtotime( $backup->value->createdAt->value );
+						if ( $backup_time > $lasttime_backup ) {
+							$lasttime_backup = $backup_time;
+						}
+					}
+				}
+			}
+		} elseif ( 'kinsta' === $backup_api ) {
+			$available_backups = is_array( $available_backups ) && ! empty( $available_backups ) ? $available_backups : array();
+			if ( is_array( $available_backups ) ) {
+				foreach ( $available_backups as $backup ) {
+					if ( is_object( $backup ) && ! empty( $backup->created_at ) ) {
+						$milliseconds = $backup->created_at;
+						$epoch = $milliseconds / 1000;
+						$backup_time = strtotime( $epoch );
 						if ( $backup_time > $lasttime_backup ) {
 							$lasttime_backup = $backup_time;
 						}
@@ -390,7 +404,7 @@ class Api_Backups_Utility {
 		if ( ! empty( $lastBackup ) && $lastBackup > $lasttime_backup ) {
 			return;
 		}
-		self::log_debug( 'save backup time :: [site-id=' . $site_id . '] :: [backup time=' . date( 'Y-m-d H:i:s', $lasttime_backup ) . '] :: [api-backups=' . $backup_api . ']' );
+		self::log_debug( 'Action [Save backup time] :: [site-id=' . $site_id . '] :: [backup time=' . date( 'Y-m-d H:i:s', $lasttime_backup ) . '] :: [api-backups=' . $backup_api . ']' );
 		$site     = new \stdClass();
 		$site->id = $site_id;
 		MainWP_DB::instance()->update_website_option( $site, 'primary_lasttime_backup', $lasttime_backup );

@@ -133,11 +133,6 @@ class Api_Backups_3rd_Party {
 		do_action( 'mainwp_ajax_add_action', 'kinsta_action_restore_backup', array( &$this, 'ajax_kinsta_action_restore_backup' ) );
 		do_action( 'mainwp_ajax_add_action', 'kinsta_action_delete_backup', array( &$this, 'ajax_kinsta_action_delete_backup' ) );
 
-		// TODO: non-functional.
-		// Automatically make backup before updating WP Core, Themes, Plugins & Translations.
-		// add_action( 'mainwp_before_wp_update', array( &$this, 'third_party_auto_backup' ) );
-		// add_action( 'mainwp_before_plugin_theme_translation_update', array( &$this, 'third_party_auto_backup' ) );
-
 		// Backup selected sites.
 		do_action( 'mainwp_ajax_add_action', 'action_backup_selected_sites', array( &$this, 'action_backup_selected_sites' ) );
 
@@ -167,47 +162,30 @@ class Api_Backups_3rd_Party {
 	/** @noinspection PhpUnused */
 	public static function render_mainwp_backups_page() {
 		?>
-<!--			<div class="mainwp-sub-header">-->
-<!--				<div class="ui grid">-->
-<!--					<div class="ui two column row">-->
-<!--						<div class="middle aligned column ui">-->
-<!--							<button id="action_backup_selected_sites" class="ui green mini button">--><?php //esc_html_e( 'Backup Selected Sites', 'mainwp' ); ?><!--</button>-->
-<!--						</div>-->
-<!--						<div class="right aligned middle aligned column">-->
-<!--							<a href="admin.php?page=SettingsApiBackups" class="ui mini green basic button">--><?php //esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?><!--</a>-->
-<!--						</div>-->
-<!--					</div>-->
-<!--				</div>-->
-<!--			</div>-->
 			<div class="mainwp-sub-header">
 				<div class="ui grid">
 					<div class="ui two column row">
-						<div class="middle aligned column ui"></div>
-						<div class="right aligned middle aligned column">
+						<div class="middle aligned column ui">
 							<button id="action_backup_selected_sites" class="ui green mini button"><?php esc_html_e( 'Backup Selected Sites', 'mainwp' ); ?></button>
-							<a id="api_backup_settings"
-							   href="admin.php?page=SettingsApiBackups">
-								<button class="ui mini right labeled icon button">
-									<i class="right inverted cogs icon"></i>
-									<?php esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?>
-								</button>
-							</a>
+						</div>
+						<div class="right aligned middle aligned column">
+							<a href="admin.php?page=SettingsApiBackups" class="ui mini green basic button"><?php esc_html_e( 'Manage API Backups Settings', 'mainwp' ); ?></a>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="ui segment" id="mainwp-3rd-party-api-backups">
 			<?php if ( Api_Backups_Utility::show_mainwp_message( 'mainwp-module-api-backups-info-message' ) ) : ?>
-					<div class="ui info message">
-						<i class="close icon mainwp-notice-dismiss" notice-id="mainwp-module-api-backups-info-message"></i>
-						<div><?php esc_html_e( 'This page will list the last backups created by the API Backups Extension for each Child Site that is setup with an API provider.', 'mainwp' ); ?></div>
-					</div>
-				<?php endif; ?>
+				<div class="ui info message">
+					<i class="close icon mainwp-notice-dismiss" notice-id="mainwp-module-api-backups-info-message"></i>
+					<div><?php esc_html_e( 'This page will list the last backups created by the API Backups Extension for each Child Site that is setup with an API provider.', 'mainwp' ); ?></div>
+				</div>
+			<?php endif; ?>
 			<?php self::action_notifications(); ?>
 			<?php self::render_api_backups_table( '3rd-party-api-backups' ); ?>
 
 			</div>
-			<?php
+		<?php
 	}
 
 
@@ -223,16 +201,16 @@ class Api_Backups_3rd_Party {
 		// Get all Child Sites aloud by user role.
 		$websites = MainWP_DB::instance()->query( MainWP_DB::instance()->get_sql_wp_for_current_user() );
 
-		?>
-			<div class="ui toast" id="backups_site_toast">
-				<i class="archive icon"></i>
-				<div class="content">
-					<div class="message"></div>
-				</div>
+	?>
+		<div class="ui toast" id="backups_site_toast">
+			<i class="archive icon"></i>
+			<div class="content">
+				<div class="message"></div>
 			</div>
+		</div>
 
-			<table id="mainwp-3rd-party-backups-table" class="ui mainwp-api-backup-table table" style="width:100%">
-				<thead>
+		<table id="mainwp-3rd-party-backups-table" class="ui mainwp-api-backup-table table" style="width:100%">
+			<thead>
 				<tr>
 					<th class="no-sort collapsing check-column">
 						<span class="ui checkbox">
@@ -247,35 +225,34 @@ class Api_Backups_3rd_Party {
 					<th><?php esc_html_e( 'Last Manual Backup Date', 'mainwp' ); ?></th>
 					<th class="no-sort collapsing"></th>
 				</tr>
-				</thead>
-				<tbody>
-			<?php while ( $websites && ( $website = Api_Backups_Helper::fetch_object( $websites ) ) ) { ?>
+			</thead>
+			<tbody>
+				<?php while ( $websites && ( $website = Api_Backups_Helper::fetch_object( $websites ) ) ) { ?>
 					<?php
-					/**
-					 * Grab Child Site data needed to display Table.
-					 */
+						/**
+						 * Grab Child Site data needed to display Table.
+						 */
 
-					// Grab API Provider.
-					$api_provider_array   = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_api' ) );
-					$api_provider         = ( isset( $api_provider_array['mainwp_3rd_party_api'] ) && '' != $api_provider_array['mainwp_3rd_party_api'] ) ? $api_provider_array['mainwp_3rd_party_api'] : 'None';
-					$api_provider_options = strtolower( $api_provider );
+						// Grab API Provider.
+						$api_provider_array   = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_api' ) );
+						$api_provider         = ( isset( $api_provider_array['mainwp_3rd_party_api'] ) && '' != $api_provider_array['mainwp_3rd_party_api'] ) ? $api_provider_array['mainwp_3rd_party_api'] : 'None';
+						$api_provider_options = strtolower( $api_provider );
 
-					// Check for Plesk and change to WP-Toolkit.
-					if ( 'Plesk' === $api_provider ) {
-						$api_provider = 'Plesk (WP Toolkit)';
-					}
+						// Check for Plesk and change to WP-Toolkit.
+						if ( 'Plesk' === $api_provider ) {
+							$api_provider = 'Plesk (WP Toolkit)';
+						}
 
-					// Grab Last Backup date UTC.
-					$last_backup_array = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ) );
-					$last_backup_UTC   = isset( $last_backup_array[ 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ] ) ? $last_backup_array[ 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ] : '';
+						// Grab Last Backup date UTC.
+						$last_backup_array = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ) );
+						$last_backup_UTC   = isset( $last_backup_array[ 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ] ) ? $last_backup_array[ 'mainwp_3rd_party_' . $api_provider_options . '_last_backup' ] : '';
 
-					// If found Convert UTC into chosen WP DateTime formats or return "Awaiting first backup".
-					if ( '' === $last_backup_UTC ) {
-						$last_backup = esc_html__( 'Awaiting first backup', 'mainwp' );
-					} else {
-						$last_backup = Api_Backups_Utility::format_timestamp( $last_backup_UTC );
-					}
-
+						// If found Convert UTC into chosen WP DateTime formats or return "Awaiting first backup".
+						if ( '' === $last_backup_UTC ) {
+							$last_backup = esc_html__( 'Awaiting first backup', 'mainwp' );
+						} else {
+							$last_backup = Api_Backups_Utility::format_timestamp( $last_backup_UTC );
+						}
 					?>
 					<tr website-id="<?php echo intval( $website->id ); ?>" provider-name="<?php echo $api_provider; ?>">
 						<td class="check-column">
@@ -320,41 +297,38 @@ class Api_Backups_3rd_Party {
 							</div>
 						</td>
 					</tr>
-					<?php
+				<?php } ?>
+				<?php Api_Backups_Helper::free_result( $websites ); ?>
+			</tbody>
+		</table>
+		<script type="text/javascript">
+			let responsive = true;
+			if ( jQuery( window ).width() > 1140 ) {
+				responsive = false;
 			}
-			Api_Backups_Helper::free_result( $websites );
-			?>
-				</tbody>
-			</table>
-			<script type="text/javascript">
-				let responsive = true;
-				if ( jQuery( window ).width() > 1140 ) {
-					responsive = false;
-				}
-				jQuery( document ).ready( function() {
-					jQuery( '.mainwp-api-backup-table' ).DataTable( {
-						"stateSave": true,
-						"stateDuration": 0,
-						"colReorder" : {
-							fixedColumnsLeft: 1,
-							fixedColumnsRight: 1
-						},
-						"responsive": responsive,
-						"scrollX": true,
-						"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
-						"columnDefs": [ { "targets": 'no-sort', "orderable": false } ],
-						"order": [ [ 1, "asc" ] ],
-						"language": { "emptyTable": "No backups found." },
-						"drawCallback": function( settings ) {
-							jQuery('#mainwp-3rd-party-backups-table .ui.checkbox').checkbox();
-							jQuery('.mainwp-api-backup-table .ui.dropdown').dropdown();
-							mainwp_datatable_fix_menu_overflow();
-						},
-					} );
+			jQuery( document ).ready( function() {
+				jQuery( '.mainwp-api-backup-table' ).DataTable( {
+					"stateSave": true,
+					"stateDuration": 0,
+					"colReorder" : {
+						fixedColumnsLeft: 1,
+						fixedColumnsRight: 1
+					},
+					"responsive": responsive,
+					"scrollX": true,
+					"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+					"columnDefs": [ { "targets": 'no-sort', "orderable": false } ],
+					"order": [ [ 1, "asc" ] ],
+					"language": { "emptyTable": "No backups found." },
+					"drawCallback": function( settings ) {
+						jQuery('#mainwp-3rd-party-backups-table .ui.checkbox').checkbox();
+						jQuery('.mainwp-api-backup-table .ui.dropdown').dropdown();
+						mainwp_datatable_fix_menu_overflow();
+					},
 				} );
-			</script>
-			<?php
-	}
+			} );
+		</script>
+	<?php } // END render_api_backups_table().
 
 	/**
 	 * Render the Individual 3rd Party API Backup Page.
@@ -431,22 +405,22 @@ class Api_Backups_3rd_Party {
 					</div>
 				</div>
 				<?php
-				$columns = 'one';
-				if ( 'cpanel' === $backup_api || 'plesk' === $backup_api ) {
-					$columns = 'two';
-				}
+					$columns = 'one';
+					if ( 'cpanel' === $backup_api || 'plesk' === $backup_api ) {
+						$columns = 'two';
+					}
 				?>
 				<div class="mainwp-sub-header">
 					<div class="ui grid">
 						<div class="ui <?php echo esc_html( $columns ); ?> column row">
-								<div class="middle aligned column ui">
-									<?php if ( 'cpanel' === $backup_api ) : ?>
-										<div id="mainwp_api_cpanel_backup_tabs" class="ui top attached tabular menu">
-											<div class="active item" data-tab="cpanel-native"><i class="fitted cpanel big icon"></i></div>
-											<div class="item" data-tab="cpanel-wp-toolkit"><i class="fitted wordpress big icon"></i></div><?php //phpcs:ignore -- skip wordpress.?>
-										</div>
-									<?php endif; ?>
-								</div>
+							<div class="middle aligned column ui">
+								<?php if ( 'cpanel' === $backup_api ) : ?>
+									<div id="mainwp_api_cpanel_backup_tabs" class="ui top attached tabular menu">
+										<div class="active item" data-tab="cpanel-native"><i class="fitted cpanel big icon"></i></div>
+										<div class="item" data-tab="cpanel-wp-toolkit"><i class="fitted wordpress big icon"></i></div><?php //phpcs:ignore -- skip wordpress.?>
+									</div>
+								<?php endif; ?>
+							</div>
 							<div class="right aligned middle aligned column">
 								<?php if ( 'cpanel' === $backup_api ) : ?>
 									<button id="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_create_full_backup" website_id="<?php echo intval( $website['id'] ); ?>" class="ui mini green button"><?php esc_html_e( 'Backup Files &amp; Database', 'mainwp' ); ?></button>
@@ -460,62 +434,52 @@ class Api_Backups_3rd_Party {
 								<?php
 								if ( 'digitalocean' === $backup_api ) {
 									// Grab Linode instance id.
-									$digitalocean_droplet_id = Api_Backups_Helper::get_website_options(
-										$website,
-										array(
-											'mainwp_3rd_party_instance_id',
-										)
-									);
+									$digitalocean_droplet_id = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_instance_id', ) );
 									$droplet_id              = isset( $digitalocean_droplet_id['mainwp_3rd_party_instance_id'] ) ? $digitalocean_droplet_id['mainwp_3rd_party_instance_id'] : null;
-									?>
-										<a href="https://cloud.digitalocean.com/<?php echo $droplet_id; ?>/backup" target="_blank" class="ui mini button">
-											<i class="external icon"></i>
+								?>
+									<a href="https://cloud.digitalocean.com/<?php echo $droplet_id; ?>/backup" target="_blank" class="ui mini button">
+										<i class="external icon"></i>
 										<?php esc_html_e( 'View on DigitalOcean', 'mainwp' ); ?>
-										</a>
-									<?php } ?>
+									</a>
+								<?php } ?>
 								<?php // Render Linode specific action buttons. ?>
 								<?php
 								if ( 'linode' === $backup_api ) {
 									// Grab Linode instance id.
-									$linode_instance_id = Api_Backups_Helper::get_website_options(
-										$website,
-										array(
-											'mainwp_3rd_party_instance_id',
-										)
-									);
+									$linode_instance_id = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_instance_id', ) );
 									$instance_id        = isset( $linode_instance_id['mainwp_3rd_party_instance_id'] ) ? $linode_instance_id['mainwp_3rd_party_instance_id'] : null;
-									?>
-										<button id="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_cancel_backups" website_id="<?php echo intval( $website['id'] ); ?>" class="ui mini button"><?php esc_html_e( 'Disable & Remove Backups on This Linode', 'mainwp' ); ?></button>
-										<a href="https://cloud.linode.com/linodes/<?php echo $instance_id; ?>/backup" target="_blank" class="ui mini button">
-											<i class="external icon"></i>
+								?>
+									<button id="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_cancel_backups" website_id="<?php echo intval( $website['id'] ); ?>" class="ui mini button"><?php esc_html_e( 'Disable & Remove Backups on This Linode', 'mainwp' ); ?></button>
+									<a href="https://cloud.linode.com/linodes/<?php echo $instance_id; ?>/backup" target="_blank" class="ui mini button">
+										<i class="external icon"></i>
 										<?php esc_html_e( 'View on Akamai (Linode)', 'mainwp' ); ?>
-										</a>
-									<?php } ?>
+									</a>
+								<?php } ?>
 								<?php // Render Cloudways specific action buttons. ?>
 								<?php
 								if ( 'cloudways' === $backup_api ) {
 									// Grab Cloudways app id.
 									$site_options = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_app_id' ) );
 									$app_id       = isset( $site_options['mainwp_3rd_party_app_id'] ) ? $site_options['mainwp_3rd_party_app_id'] : null;
-									?>
-										<button id="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_delete_backup" website_id="<?php echo intval( $website['id'] ); ?>" class="ui mini button"><?php esc_html_e( 'Delete 24hr Restore Point', 'mainwp' ); ?></button>
-										<a href="https://platform.cloudways.com/apps/<?php echo $app_id; ?>/restore" target="_blank" class="ui mini button">
-											<i class="external icon"></i>
+								?>
+									<button id="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_delete_backup" website_id="<?php echo intval( $website['id'] ); ?>" class="ui mini button"><?php esc_html_e( 'Delete 24hr Restore Point', 'mainwp' ); ?></button>
+									<a href="https://platform.cloudways.com/apps/<?php echo $app_id; ?>/restore" target="_blank" class="ui mini button">
+										<i class="external icon"></i>
 										<?php esc_html_e( 'View on Cloudways', 'mainwp' ); ?>
-										</a>
-									<?php } ?>
+									</a>
+								<?php } ?>
 								<?php // Render Vultr specific action buttons. ?>
 								<?php
 								if ( 'vultr' === $backup_api ) {
 									// Grab Vultr Instance id.
 									$site_options = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_instance_id' ) );
 									$instance_id  = isset( $site_options['mainwp_3rd_party_instance_id'] ) ? $site_options['mainwp_3rd_party_instance_id'] : null;
-									?>
-										<a href="https://my.vultr.com/subs/?id=<?php echo $instance_id; ?>#subssnapshots" target="_blank" class="ui mini button">
-											<i class="external icon"></i>
+								?>
+									<a href="https://my.vultr.com/subs/?id=<?php echo $instance_id; ?>#subssnapshots" target="_blank" class="ui mini button">
+										<i class="external icon"></i>
 										<?php esc_html_e( 'View on Vultr', 'mainwp' ); ?>
-										</a>
-									<?php } ?>
+									</a>
+								<?php } ?>
 								<?php // Render GridPane specific action buttons. ?>
 								<?php if ( 'gridpane' === $backup_api ) { ?>
 									<a href="https://my.gridpane.com/sites" target="_blank" class="ui mini button">
@@ -528,8 +492,7 @@ class Api_Backups_3rd_Party {
 					</div>
 				</div>
 				<div class="ui segment">
-
-				<?php // Render info notifications. ?>
+					<?php // Render info notifications. ?>
 					<?php // Render Linode info notifications. ?>
 					<?php if ( 'linode' === $backup_api ) { ?>
 						<?php if ( Api_Backups_Utility::show_mainwp_message( 'mainwp-module-api-backups-info-common-message1' ) ) : ?>
@@ -585,32 +548,26 @@ class Api_Backups_3rd_Party {
 
 					<?php // Display Kinsta Table. ?>
 					<?php if ( 'kinsta' === $backup_api ) {
-						//if ( is_object( $available_backups ) && isset( $available_backups->value ) ) {
+
 						if ( is_object( $available_backups ) ) {
-							//$available_backups = $available_backups->value;
-							//echo '<pre>';
-							//print_r($available_backups);
 							$environment = $available_backups->environment->display_name;
 							$available_backups = $available_backups->environment->backups;
-							//print_r($available_backups);
-							//echo '<br>';
-							//print_r($environment);
-							//echo '</pre>';
-							//die();
 						} else {
 							$available_backups = array();
 						}
 
-//						echo '<pre>';
-//						print_r($available_backups);
-//						echo '</pre>';
-
 					?>
-							<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
+						<?php if ( Api_Backups_Utility::show_mainwp_message( 'mainwp-module-api-backups-info-message' ) ) : ?>
+							<div class="ui info message">
+								<i class="close icon mainwp-notice-dismiss" notice-id="mainwp-module-api-backups-info-message"></i>
+								<div><?php esc_html_e( 'You can create up to 5 manual backups. Each manual backup will be stored for 14 days.', 'mainwp' ); ?></div>
+							</div>
+						<?php endif; ?>
+						<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
 								<thead>
 								<tr>
 									<th><?php esc_html_e( 'Backup Name', 'mainwp' ); ?></th>
-									<th><?php esc_html_e( 'Environment', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Note', 'mainwp' ); ?></th>
 									<th><?php esc_html_e( 'Type', 'mainwp' ); ?></th>
 									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
 									<th class="no-sort collapsing"></th>
@@ -620,52 +577,27 @@ class Api_Backups_3rd_Party {
 								<tbody>
 								<?php foreach ( $available_backups as $backup ) { ?>
 									<?php
-									// Convert Kinsta backup date to human readable format.
-									$milliseconds = $backup->created_at;
-									$epoch = $milliseconds / 1000;
-									$backup_date = Api_Backups_Utility::format_timestamp( intval( $epoch ) );
-
-//									$opts = Api_Backups_Helper::get_website_options(
-//										$website['id'],
-//										array(
-//											'mainwp_kinsta_installation_id', // Kinsta installation id.
-//										)
-//									);
-//
-//									if ( is_array( $opts ) ) {
-//										$installation_id = $opts['mainwp_kinsta_installation_id'] ?? '';
-//									}
+										// Convert Kinsta backup date to human readable format.
+										$backup_date = Api_Backups_Utility::format_timestamp( intval( $backup->created_at / 1000 ) );
 									?>
 									<tr>
 										<td class="collapsing"><?php esc_html_e( $backup->name ); ?></td>
-										<td class="collapsing"><?php echo esc_html( $environment ); ?></td>
+										<td class="collapsing"><?php echo esc_html( $backup->note ); ?></td>
 										<td class="collapsing"><?php echo esc_html( $backup->type ); ?></td>
 										<td class="collapsing"><?php echo esc_html( $backup_date ); ?></td>
 										<td></td>
 										<td class="collapsing right aligned">
 											<button id="kinsta_restore_button" class="ui circular icon button mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup item"
-													backup_id="<?php echo intval( $backup->id ); ?>"
 													website_id="<?php echo intval( $website['id'] ); ?>"
-													environment_id="<?php echo esc_html( $environment ); ?>"
-													backup_name="<?php echo esc_attr( $backup->name ); ?>"
+													backup_id="<?php echo intval( $backup->id ); ?>"
 													data-tooltip="<?php esc_attr_e( 'Restore Backup', 'mainwp' ); ?>"
 													data-inverted=""
 													data-position="top center">
 												<i class="undo icon"></i>
 											</button>
-											<?php
-												/**
-												 * Grab installation domain & build path to download.
-												 * Eg.: /var/www/vhosts/example.com/wordpress-backups/
-												 */
-												//$installation_domain = self::get_kinsta_home_dir();
-												//$dirdl               = '/var/www/vhosts/' . $installation_domain . '/wordpress-backups/';
-											?>
 											<button id="kinsta_delete_button" class="ui circular icon button mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_delete_backup item"
-													backup_id="<?php echo intval( $backup->id ); ?>"
 													website_id="<?php echo intval( $website['id'] ); ?>"
-													environment_id="<?php echo esc_html( $environment ); ?>"
-													backup_name="<?php echo esc_attr( $backup->name ); ?>"
+													backup_id="<?php echo intval( $backup->id ); ?>"
 													data-tooltip="<?php esc_attr_e( 'Delete Backup', 'mainwp' ); ?>"
 													data-inverted=""
 													data-position="top center">
@@ -686,48 +618,123 @@ class Api_Backups_3rd_Party {
 								</tr>
 								</tfoot>
 							</table>
-						<?php } ?>
+						<div class="ui divider hidden"></div>
+						<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
+								<thead>
+								<tr>
+									<th colspan="3">
+										<div class="ui equal width grid">
+											<div class="left aligned middle aligned column">
+												<?php esc_html_e( 'Downloadable Backups', 'mainwp' ); ?>
+											</div>
+										</div>
+									</th>
+								</tr>
+								<tr>
+									<th><?php esc_html_e( 'Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Expiry', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</thead>
+								<tbody>
+									<?php
+										// Grab Downloadable Backups.
+										$site_options = Api_Backups_Helper::get_website_options( $website, array( 'mainwp_3rd_party_kinsta_downloadable_backups' ) );
+										$downloadable_backups  = isset( $site_options['mainwp_3rd_party_kinsta_downloadable_backups'] ) ? $site_options['mainwp_3rd_party_kinsta_downloadable_backups'] : '';
+										$downloadable_backups = json_decode( $downloadable_backups );
+									?>
+									<?php if ( is_object( $downloadable_backups ) ) { ?>
+										<?php foreach ( $downloadable_backups->environment->downloadable_backups as $backup ) { ?>
+											<?php
 
-				<?php // Display Plesk Table. ?>
-				<?php
-				if ( 'plesk' === $backup_api ) {
-					// Grab available cPanel Automatic Backups or set to empty array.
-					if ( is_object( $available_backups ) && isset( $available_backups->value ) ) {
-						$available_backups = $available_backups->value;
-					} else {
-						$available_backups = array();
-					}
+												// Convert Kinsta backup dates to human readable format.
+												$created_date = Api_Backups_Utility::format_timestamp( intval( $backup->created_at / 1000 ) );
+												$expiry_date   = Api_Backups_Utility::format_timestamp( intval( $backup->expires_at / 1000 ) );
+
+
+												// Check if backup is expired, disable row including download button.
+												if (intval( $backup->expires_at / 1000 ) > time()) {
+
+
+											?>
+
+													<tr>
+														<td class="collapsing"><?php esc_html_e( $created_date ); ?></td>
+														<td class="collapsing"><?php esc_html_e( $expiry_date ); ?></td>
+														<td>
+															<a class="kinsta_download" href="<?php echo esc_attr( $backup->download_link ); ?>" target="_blank">
+																<button class="ui right labeled icon button">
+																	<i class="right download icon"></i>
+																	<?php echo esc_html__( 'Download', 'mainwp' ); ?>
+																</button>
+															</a>
+														</td>
+													</tr>
+											<?php } else { ?>
+													<tr class="disabled">
+														<td class="collapsing"><?php esc_html_e( $created_date ); ?></td>
+														<td class="collapsing"><?php esc_html_e( $expiry_date ); ?></td>
+														<td>
+															<a class="kinsta_download" href="<?php echo esc_attr( $backup->download_link ); ?>" target="_blank">
+																<button class="ui right labeled icon button disabled">
+																	<i class="right download icon"></i>
+																	<?php echo esc_html__( 'Download', 'mainwp' ); ?>
+																</button>
+															</a>
+														</td>
+													</tr>
+											<?php } ?>
+										<?php } ?>
+									<?php } ?>
+								</tbody>
+								<tfoot>
+								<tr>
+									<th><?php esc_html_e( 'Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Expiry', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</tfoot>
+							</table>
+					<?php } ?>
+					<?php // Display Plesk Table. ?>
+					<?php if ( 'plesk' === $backup_api ) {
+						// Grab available cPanel Automatic Backups or set to empty array.
+						if ( is_object( $available_backups ) && isset( $available_backups->value ) ) {
+							$available_backups = $available_backups->value;
+						} else {
+							$available_backups = array();
+						}
 					?>
 						<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
 							<thead>
-							<tr>
-								<th><?php esc_html_e( 'Backup Name', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-							</tr>
+								<tr>
+									<th><?php esc_html_e( 'Backup Name', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
 							</thead>
 							<tbody>
-							<?php foreach ( $available_backups as $backup ) { ?>
-								<?php
-								$backup_date = date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $backup->value->createdAt->value ) );
+								<?php foreach ( $available_backups as $backup ) { ?>
+									<?php
+										$backup_date = date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $backup->value->createdAt->value ) );
 
-									$opts = Api_Backups_Helper::get_website_options(
-										$website['id'],
-										array(
-											'mainwp_plesk_installation_id', // Plesk installation id.
-										)
-									);
+											$opts = Api_Backups_Helper::get_website_options(
+												$website['id'],
+												array(
+													'mainwp_plesk_installation_id', // Plesk installation id.
+												)
+											);
 
-								if ( is_array( $opts ) ) {
-									$installation_id = $opts['mainwp_plesk_installation_id'] ?? '';
-								}
-								?>
-								<tr>
-									<td class="collapsing"><?php esc_html_e( $backup->value->fileName->value ); ?></td>
-									<td class="collapsing"><?php echo esc_html( $backup_date ); ?></td>
-									<td></td>
-									<td class="collapsing right aligned">
+										if ( is_array( $opts ) ) {
+											$installation_id = $opts['mainwp_plesk_installation_id'] ?? '';
+										}
+									?>
+									<tr>
+										<td class="collapsing"><?php esc_html_e( $backup->value->fileName->value ); ?></td>
+										<td class="collapsing"><?php echo esc_html( $backup_date ); ?></td>
+										<td></td>
+										<td class="collapsing right aligned">
 											<button id="plesk_restore_button" class="ui circular mini icon button mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup item"
 													installation_id="<?php echo intval( $installation_id ); ?>"
 													website_id="<?php echo intval( $website['id'] ); ?>"
@@ -766,23 +773,22 @@ class Api_Backups_3rd_Party {
 													data-position="top center">
 												<i class="trash icon"></i>
 											</button>
-									</td>
-								</tr>
-							<?php } ?>
+										</td>
+									</tr>
+								<?php } ?>
 							</tbody>
 							<tfoot>
-							<tr>
-								<th><?php esc_html_e( 'Backup Name', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-							</tr>
+								<tr>
+									<th><?php esc_html_e( 'Backup Name', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
 							</tfoot>
 						</table>
-				<?php } ?>
-				<?php // Display cPanel Table. ?>
-				<?php
-				if ( 'cpanel' === $backup_api ) {
+					<?php } ?>
+					<?php // Display cPanel Table. ?>
+					<?php if ( 'cpanel' === $backup_api ) {
 
 					// Grab available cPanel Automatic Backups or set to empty array.
 					if ( is_object( $available_backups ) && isset( $available_backups->data ) ) {
@@ -1094,9 +1100,9 @@ class Api_Backups_3rd_Party {
 									printf(
 										esc_html__(
 											'%1$sThe WP-Toolkit API has not been enabled.%2$s
-                                        Please double check that you have set the cPanel %3$sAPI Key%4$s
-                                        on the %5$s page%6$s
-                                        and have enabled the %7$sWP Toolkit API%8$s on the %9$s page.',
+										Please double check that you have set the cPanel %3$sAPI Key%4$s
+										on the %5$s page%6$s
+										and have enabled the %7$sWP Toolkit API%8$s on the %9$s page.',
 											'mainwp'
 										),
 										'<em>',
@@ -1115,9 +1121,8 @@ class Api_Backups_3rd_Party {
 						<?php endif; ?>
 					</div>
 				<?php } ?>
-				<?php // Display GridPane Table. ?>
-				<?php
-				if ( 'gridpane' === $backup_api ) {
+					<?php // Display GridPane Table. ?>
+					<?php if ( 'gridpane' === $backup_api ) {
 					if ( isset( $available_backups->automatic ) ) {
 						$available_backups_automatic_list = explode( ',', $available_backups->automatic );
 					} else {
@@ -1196,9 +1201,8 @@ class Api_Backups_3rd_Party {
 							</tfoot>
 						</table>
 					<?php } ?>
-				<?php // Display Cloudways Table. ?>
-				<?php
-				if ( 'cloudways' === $backup_api ) {
+					<?php // Display Cloudways Table. ?>
+					<?php if ( 'cloudways' === $backup_api ) {
 
 					// Check if backups are available.
 					if ( isset( $available_backups->application_backup_exists ) && $available_backups->application_backup_exists === true ) {
@@ -1239,54 +1243,190 @@ class Api_Backups_3rd_Party {
 							</tfoot>
 						</table>
 					<?php } ?>
-				<?php // Display Vultr Table. ?>
-				<?php
-				if ( 'vultr' === $backup_api ) {
-					if ( isset( $available_backups->snapshots ) ) {
-						$available_snapshots_list = $available_backups->snapshots;
-					} else {
-						$available_snapshots_list = array();
-					}
-					if ( isset( $available_backups->backups ) ) {
-						$available_backups_list = $available_backups->backups;
-					} else {
-						$available_backups_list = array();
-					}
-					?>
+					<?php // Display Vultr Table. ?>
+					<?php if ( 'vultr' === $backup_api ) {
+						if ( isset( $available_backups->snapshots ) ) {
+							$available_snapshots_list = $available_backups->snapshots;
+						} else {
+							$available_snapshots_list = array();
+						}
+						if ( isset( $available_backups->backups ) ) {
+							$available_backups_list = $available_backups->backups;
+						} else {
+							$available_backups_list = array();
+						}
+						?>
+							<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
+								<thead>
+								<tr>
+									<th><?php esc_html_e( 'Vultr Backup Label', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Compressed Size', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</thead>
+								<tbody>
+								<?php foreach ( $available_snapshots_list as $backup ) { ?>
+									<tr>
+										<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->description ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->size ) ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->compressed_size ) ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->date_created ) ) ); ?></td>
+										<td><?php esc_html_e( $backup->status ); ?></td>
+										<td></td>
+										<td>
+											<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button" website_id="<?php echo intval( $website['id'] ); ?>" snapshot_id="<?php echo esc_attr( $backup->id ); ?>" href="javascript:void(0)"><i class="undo icon"></i></a>
+											<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_delete_backup ui mini icon button" website_id="<?php echo intval( $website['id'] ); ?>" snapshot_id="<?php echo esc_attr( $backup->id ); ?>" href="javascript:void(0)"><i class="trash icon"></i></a>
+										</td>
+									</tr>
+								<?php } ?>
+								<?php foreach ( $available_backups_list as $backup ) { ?>
+									<tr>
+										<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->description ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->size ) ); ?></td>
+										<td><?php echo esc_html( 'N/A', 'mainwp' ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->date_created ) ) ); ?></td>
+										<td><?php esc_html_e( $backup->status ); ?></td>
+										<td></td>
+										<td>
+											<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
+												website_id="<?php echo intval( $website['id'] ); ?>"
+												snapshot_id="<?php echo esc_attr( $backup->id ); ?>"
+												href="javascript:void(0)">
+												<i class="undo icon"></i>
+											</a>
+											<a class="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_delete_backup ui mini icon button"
+												website_id="<?php echo intval( $website['id'] ); ?>"
+												snapshot_id="<?php echo esc_attr( $backup->id ); ?>"
+												href="javascript:void(0)">
+												<i class="trash icon"></i>
+											</a>
+										</td>
+									</tr>
+								<?php } ?>
+								</tbody>
+								<tfoot>
+								<tr>
+									<th><?php esc_html_e( 'Vultr Backup Label', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Compressed Size', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</tfoot>
+							</table>
+						<?php } ?>
+					<?php // Display Linode Table. ?>
+					<?php if ( 'linode' === $backup_api ) {
+
+							// Automatic Backups.
+						if ( isset( $available_backups->automatic ) ) {
+							$available_backups_automatic_list = $available_backups->automatic;
+						} else {
+							$available_backups_automatic_list = array();
+						}
+
+							// Manual Backups.
+						if ( isset( $available_backups->snapshot ) ) {
+							$available_backups_snapshot_list = $available_backups->snapshot;
+						} else {
+							$available_backups_snapshot_list = array();
+						}
+						?>
+							<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
+								<thead>
+								<tr>
+									<th><?php esc_html_e( 'Akamai (Linode) Backup Type', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</thead>
+								<tbody>
+								<?php foreach ( $available_backups_automatic_list as $backup ) { ?>
+									<tr>
+										<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->type ); ?></td>
+										<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->created ) ) ); ?></td>
+										<td class="operation_status"><?php esc_html_e( $backup->status ); ?></td>
+										<td></td>
+										<td></td>
+										<td>
+											<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
+												website_id="<?php echo intval( $website['id'] ); ?>"
+												backup_type="<?php echo esc_attr( $backup->type ); ?>"
+												backup_id="<?php echo esc_attr( $backup->id ); ?>"
+												href="javascript:void(0)">
+												<i class="undo icon"></i>
+											</a>
+										</td>
+									</tr>
+								<?php } ?>
+								<?php foreach ( $available_backups_snapshot_list as $backup ) { ?>
+									<?php if ( $backup !== null ) { ?>
+										<tr>
+											<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->type ); ?></td>
+											<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->created ) ) ); ?></td>
+											<td><?php esc_html_e( $backup->status ); ?></td>
+											<td></td>
+											<td></td>
+											<td>
+
+											<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
+												website_id="<?php echo intval( $website['id'] ); ?>"
+												backup_type="<?php echo esc_attr( $backup->type ); ?>"
+												backup_id="<?php echo esc_attr( $backup->id ); ?>"
+												href="javascript:void(0)">
+												<i class="undo icon"></i>
+											</a>
+											</td>
+										</tr>
+									<?php } ?>
+								<?php } ?>
+								</tbody>
+								<tfoot>
+								<tr>
+									<th><?php esc_html_e( 'Akamai (Linode) Backup Type', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
+									<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+									<th class="no-sort collapsing"></th>
+								</tr>
+								</tfoot>
+							</table>
+						<?php } ?>
+					<?php // Display DigitalOcean Table. ?>
+					<?php if ( 'digitalocean' === $backup_api ) {
+						if ( isset( $available_backups->snapshots ) ) {
+							$available_backups = $available_backups->snapshots;
+						}
+						if ( ! is_array( $available_backups ) ) {
+							$available_backups = array();
+						}
+						?>
 						<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
 							<thead>
 							<tr>
-								<th><?php esc_html_e( 'Vultr Backup Label', 'mainwp' ); ?></th>
+								<th><?php esc_html_e( 'DigitalOcean Backup Label', 'mainwp' ); ?></th>
 								<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Compressed Size', 'mainwp' ); ?></th>
 								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
 								<th class="no-sort collapsing"></th>
 								<th class="no-sort collapsing"></th>
 							</tr>
 							</thead>
 							<tbody>
-							<?php foreach ( $available_snapshots_list as $backup ) { ?>
+							<?php foreach ( $available_backups as $backup ) { ?>
 								<tr>
-									<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->description ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->size ) ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->compressed_size ) ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->date_created ) ) ); ?></td>
-									<td><?php esc_html_e( $backup->status ); ?></td>
-									<td></td>
-									<td>
-										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button" website_id="<?php echo intval( $website['id'] ); ?>" snapshot_id="<?php echo esc_attr( $backup->id ); ?>" href="javascript:void(0)"><i class="undo icon"></i></a>
-										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_delete_backup ui mini icon button" website_id="<?php echo intval( $website['id'] ); ?>" snapshot_id="<?php echo esc_attr( $backup->id ); ?>" href="javascript:void(0)"><i class="trash icon"></i></a>
-									</td>
-								</tr>
-							<?php } ?>
-							<?php foreach ( $available_backups_list as $backup ) { ?>
-								<tr>
-									<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->description ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::human_filesize( $backup->size ) ); ?></td>
-									<td><?php echo esc_html( 'N/A', 'mainwp' ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->date_created ) ) ); ?></td>
-									<td><?php esc_html_e( $backup->status ); ?></td>
+									<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->name ); ?></td>
+									<td><?php echo intval( $backup->size_gigabytes ); ?>GB</td>
+									<td><?php esc_html_e( Api_Backups_Utility::format_timestamp( strtotime( $backup->created_at ) ) ); ?></td>
 									<td></td>
 									<td>
 										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
@@ -1307,156 +1447,16 @@ class Api_Backups_3rd_Party {
 							</tbody>
 							<tfoot>
 							<tr>
-								<th><?php esc_html_e( 'Vultr Backup Label', 'mainwp' ); ?></th>
+								<th><?php esc_html_e( 'DigitalOcean Backup Label', 'mainwp' ); ?></th>
 								<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Compressed Size', 'mainwp' ); ?></th>
 								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
 								<th class="no-sort collapsing"></th>
 								<th class="no-sort collapsing"></th>
 							</tr>
 							</tfoot>
 						</table>
 					<?php } ?>
-				<?php // Display Linode Table. ?>
-				<?php
-				if ( 'linode' === $backup_api ) {
-
-						// Automatic Backups.
-					if ( isset( $available_backups->automatic ) ) {
-						$available_backups_automatic_list = $available_backups->automatic;
-					} else {
-						$available_backups_automatic_list = array();
-					}
-
-						// Manual Backups.
-					if ( isset( $available_backups->snapshot ) ) {
-						$available_backups_snapshot_list = $available_backups->snapshot;
-					} else {
-						$available_backups_snapshot_list = array();
-					}
-					?>
-						<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
-							<thead>
-							<tr>
-								<th><?php esc_html_e( 'Akamai (Linode) Backup Type', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-							</tr>
-							</thead>
-							<tbody>
-							<?php foreach ( $available_backups_automatic_list as $backup ) { ?>
-								<tr>
-									<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->type ); ?></td>
-									<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->created ) ) ); ?></td>
-									<td class="operation_status"><?php esc_html_e( $backup->status ); ?></td>
-									<td></td>
-									<td></td>
-									<td>
-										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
-											website_id="<?php echo intval( $website['id'] ); ?>"
-											backup_type="<?php echo esc_attr( $backup->type ); ?>"
-											backup_id="<?php echo esc_attr( $backup->id ); ?>"
-											href="javascript:void(0)">
-											<i class="undo icon"></i>
-										</a>
-									</td>
-								</tr>
-							<?php } ?>
-							<?php foreach ( $available_backups_snapshot_list as $backup ) { ?>
-								<?php if ( $backup !== null ) { ?>
-									<tr>
-										<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->type ); ?></td>
-										<td><?php echo esc_html( Api_Backups_Utility::format_timestamp( strtotime( $backup->created ) ) ); ?></td>
-										<td><?php esc_html_e( $backup->status ); ?></td>
-										<td></td>
-										<td></td>
-										<td>
-
-										<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
-											website_id="<?php echo intval( $website['id'] ); ?>"
-											backup_type="<?php echo esc_attr( $backup->type ); ?>"
-											backup_id="<?php echo esc_attr( $backup->id ); ?>"
-											href="javascript:void(0)">
-											<i class="undo icon"></i>
-										</a>
-										</td>
-									</tr>
-								<?php } ?>
-							<?php } ?>
-							</tbody>
-							<tfoot>
-							<tr>
-								<th><?php esc_html_e( 'Akamai (Linode) Backup Type', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'mainwp' ); ?></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-								<th class="no-sort collapsing"></th>
-							</tr>
-							</tfoot>
-						</table>
-					<?php } ?>
-				<?php // Display DigitalOcean Table. ?>
-				<?php
-				if ( 'digitalocean' === $backup_api ) {
-					if ( isset( $available_backups->snapshots ) ) {
-						$available_backups = $available_backups->snapshots;
-					}
-					if ( ! is_array( $available_backups ) ) {
-						$available_backups = array();
-					}
-					?>
-					<table id="mainwp-siteid-<?php echo intval( $website['id'] ); ?>-table" class="ui mainwp-api-backup-table table" style="width:100%">
-						<thead>
-						<tr>
-							<th><?php esc_html_e( 'DigitalOcean Backup Label', 'mainwp' ); ?></th>
-							<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
-							<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-							<th class="no-sort collapsing"></th>
-							<th class="no-sort collapsing"></th>
-						</tr>
-						</thead>
-						<tbody>
-						<?php foreach ( $available_backups as $backup ) { ?>
-							<tr>
-								<td><i class="ui notched circle loading icon" style="display:none;"></i> <?php esc_html_e( $backup->name ); ?></td>
-								<td><?php echo intval( $backup->size_gigabytes ); ?>GB</td>
-								<td><?php esc_html_e( Api_Backups_Utility::format_timestamp( strtotime( $backup->created_at ) ) ); ?></td>
-								<td></td>
-								<td>
-									<a class="mainwp_3rd_party_api_<?php echo esc_attr( $backup_api ); ?>_action_restore_backup ui mini icon button"
-										website_id="<?php echo intval( $website['id'] ); ?>"
-										snapshot_id="<?php echo esc_attr( $backup->id ); ?>"
-										href="javascript:void(0)">
-										<i class="undo icon"></i>
-									</a>
-									<a class="mainwp_3rd_party_api_<?php esc_attr_e( $backup_api ); ?>_action_delete_backup ui mini icon button"
-										website_id="<?php echo intval( $website['id'] ); ?>"
-										snapshot_id="<?php echo esc_attr( $backup->id ); ?>"
-										href="javascript:void(0)">
-										<i class="trash icon"></i>
-									</a>
-								</td>
-							</tr>
-						<?php } ?>
-						</tbody>
-						<tfoot>
-						<tr>
-							<th><?php esc_html_e( 'DigitalOcean Backup Label', 'mainwp' ); ?></th>
-							<th><?php esc_html_e( 'Size', 'mainwp' ); ?></th>
-							<th><?php esc_html_e( 'Date Created', 'mainwp' ); ?></th>
-							<th class="no-sort collapsing"></th>
-							<th class="no-sort collapsing"></th>
-						</tr>
-						</tfoot>
-					</table>
-				<?php } ?>
-
-			</div>
+				</div>
 				<script type="text/javascript">
 					let responsive = true;
 					if ( jQuery( window ).width() > 1140 ) {
@@ -1486,7 +1486,7 @@ class Api_Backups_3rd_Party {
 					} );
 				</script>
 			<?php
-			} // END if.
+		} // END if.
 	}
 
 	/*********************************************************************************
@@ -1533,11 +1533,11 @@ class Api_Backups_3rd_Party {
 		}
 
 		$output = curl_exec( $ch );
+		$httpcode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-		Api_Backups_Utility::log_debug( $baseURL . $url );
+		Api_Backups_Utility::log_debug( '[' . $httpcode . ']::' . $baseURL . $url );
 		Api_Backups_Utility::log_debug( $output );
 
-		$httpcode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 		if ( $httpcode != '200' ) {
 			return false;
 			// die( 'An error occurred code: ' . $httpcode . ' output: ' . substr( $output, 0, 10000 ) );
@@ -1974,13 +1974,13 @@ class Api_Backups_3rd_Party {
 		curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
 
 		$resp = curl_exec( $curl );
+		$httpCode = curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 
-		Api_Backups_Utility::log_debug( $Baseurl . $url );
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $Baseurl . $url );
 		Api_Backups_Utility::log_debug( $resp );
 
 		$response = array();
 		// Basic Error reporting. ( should wrap in try catch MainWP Exceptions call during code refactoring )
-		$httpCode = curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 		if ( ( $httpCode != '201' ) && ( $httpCode != '200' ) && ( $httpCode != '202' ) && ( $httpCode != '204' ) ) {
 			$decode_resp = json_decode( $resp );
 			$error       = $decode_resp->error;
@@ -2350,9 +2350,11 @@ class Api_Backups_3rd_Party {
 		);
 
 		$response = curl_exec( $curl );
+		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 
-		Api_Backups_Utility::log_debug( $Baseurl . $url );
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $Baseurl . $url );
 		Api_Backups_Utility::log_debug( $response );
+
 
 		curl_close( $curl );
 		return $response;
@@ -2710,7 +2712,9 @@ class Api_Backups_3rd_Party {
 
 		$response = curl_exec( $curl );
 
-		Api_Backups_Utility::log_debug( $Baseurl . $url );
+		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
+
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $Baseurl . $url );
 		Api_Backups_Utility::log_debug( $response );
 
 		curl_close( $curl );
@@ -3022,11 +3026,11 @@ class Api_Backups_3rd_Party {
 		);
 
 		$resp = curl_exec( $curl );
+		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 
-		Api_Backups_Utility::log_debug( $Baseurl . $url );
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $Baseurl . $url );
 		Api_Backups_Utility::log_debug( $resp );
 
-		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 		$response['httpCode'] = $httpCode;
 		$response['response'] = $resp;
 		if ( '201' !== $httpCode && '200' !== $httpCode && '204' !== $httpCode ) {
@@ -3285,10 +3289,8 @@ class Api_Backups_3rd_Party {
 		$resp     = curl_exec( $curl );
 		$httpCode = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 
-		Api_Backups_Utility::log_debug( $baseurl . $url . ' :: [api_key=' . $api_key . ']' );
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $baseurl . $url );
 		Api_Backups_Utility::log_debug( $resp );
-
-		Api_Backups_Utility::log_debug( '[httpCode=' . $httpCode . ']' );
 
 		$response['httpCode'] = $httpCode;
 		$response['response'] = $resp;
@@ -3684,12 +3686,13 @@ class Api_Backups_3rd_Party {
 
 		$resp = curl_exec( $curl );
 
-		Api_Backups_Utility::log_debug( $baseurl . $url );
-		Api_Backups_Utility::log_debug( $resp );
-
 		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 		$response['httpCode'] = $httpCode;
 		$response['response'] = $resp;
+
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $baseurl . $url );
+		Api_Backups_Utility::log_debug( $resp );
+
 		if ( '201' !== $httpCode && '200' !== $httpCode && '204' !== $httpCode ) {
 			$response['status'] = 'false';
 		} else {
@@ -3741,10 +3744,11 @@ class Api_Backups_3rd_Party {
 
 		$resp = curl_exec( $curl );
 
-		Api_Backups_Utility::log_debug( $baseurl . $url );
+		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
+
+		Api_Backups_Utility::log_debug( '[' . $httpCode . ']::' . $baseurl . $url );
 		Api_Backups_Utility::log_debug( $resp );
 
-		$httpCode             = (string) curl_getinfo( $curl, CURLINFO_HTTP_CODE );
 		$response['httpCode'] = $httpCode;
 		$response['response'] = $resp;
 		if ( '201' !== $httpCode && '200' !== $httpCode && '204' !== $httpCode ) {
@@ -4722,20 +4726,13 @@ class Api_Backups_3rd_Party {
 
 		$kinsta_authentication_credentials = array();
 
-		// $website_id = $_GET['id'];
-
 		// Grab website_id & from Ajax post if $website_id is not set.
 		if ( empty( $website_id ) ) {
 			if ( is_admin() && defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				if ( $_POST['website_id'] ) {
-					// Grab $_POST['data'].
-					$website_id = $_POST['website_id'];
-				} else {
-					// Grab $_GET['data'] from url.
-					$website_id = $_GET['id'];
-				}
+				// Grab $_POST['data'].
+				$website_id = $_POST['website_id'];
 			} else {
-				// Grab $_GET['data'] from url.
+				// Grab $_GET['data'] from url if not Ajax call.
 				$website_id = $_GET['id'];
 			}
 		}
@@ -4775,6 +4772,7 @@ class Api_Backups_3rd_Party {
 			'website_id'             => $website_id,
 		);
 
+
 		return $kinsta_authentication_credentials;
 	}
 
@@ -4787,7 +4785,7 @@ class Api_Backups_3rd_Party {
 	 * @param mixed  $data Json encoded array - Optional post data for the call
 	 * @return array Output from cPanel API
 	 */
-	public static function call_kinsta_api( $method, $url, $baseurl, $api_key, $backup_data = array() ) {
+	public static function call_kinsta_api( $method, $url, $baseurl, $api_key, $action, $backup_data = array() ) {
 
 		$curl = curl_init();
 
@@ -4807,7 +4805,6 @@ class Api_Backups_3rd_Party {
 				CURLOPT_HTTPHEADER     => array(
 					'Content-Type: application/json',
 					"Authorization: Bearer $api_Key",
-					'X-Swaggerhub-Cookie: ',
 				),
 			)
 		);
@@ -4824,9 +4821,13 @@ class Api_Backups_3rd_Party {
 			$response['status'] = 'true';
 		}
 
-		Api_Backups_Utility::log_debug( $baseurl . $url . ' :: [api_key=' . $api_key . ']' );
-		Api_Backups_Utility::log_debug( $resp );
-		Api_Backups_Utility::log_debug( '[httpCode=' . $httpCode . ']' );
+		// Log API call.
+		$payload = "[Status] $httpCode :: [Action] $action :: [EndPoint] $baseurl$url";
+		$payload_response = "[Status] $httpCode :: [Action] $action :: [Response] $resp";
+		Api_Backups_Utility::log_debug( $payload );
+		Api_Backups_Utility::log_debug( $payload_response );
+
+		//Api_Backups_Utility::log_debug( '[ Status ] ' . $httpCode . ' :: [ Action ] ' . $action . ' :: [ EndPoint ] ' . $baseurl . $url . ' :: [ Response ]' . $resp );
 
 		curl_close( $curl );
 		return $response;
@@ -4849,12 +4850,31 @@ class Api_Backups_3rd_Party {
 		$kinsta_env_id                     = $kinsta_authentication_credentials[0]['kinsta_environment_id'];
 		$website_id                        = $kinsta_authentication_credentials[0]['website_id'];
 
-		// Grab backup meta.
-		$api_response = self::call_kinsta_api( 'GET', '/sites/environments/' . $kinsta_env_id . '/backups', $kinsta_baseurl, $kinsta_api_key );
+		$action = "kinsta_action_refresh_available_backups";
 
-		$all_backups = $api_response['response'];
-		Api_Backups_Helper::update_website_option( $website_id, 'mainwp_3rd_party_kinsta_available_backups', $all_backups );
-		Api_Backups_Utility::save_lasttime_backup( $website_id, $all_backups, 'kinsta' );
+		// Grab backup meta.
+		$api_response = self::call_kinsta_api( 'GET', '/sites/environments/' . $kinsta_env_id . '/backups', $kinsta_baseurl, $kinsta_api_key, $action );
+
+		if ( $api_response['status'] === 'true' ) {
+			$all_backups = $api_response['response'];
+			Api_Backups_Helper::update_website_option( $website_id, 'mainwp_3rd_party_kinsta_available_backups', $all_backups );
+			Api_Backups_Utility::save_lasttime_backup( $website_id, $all_backups, 'kinsta' );
+
+			$action = "kinsta_action_refresh_available_backups_downloadable";
+
+			$downloadable_backups = self::call_kinsta_api( 'GET', '/sites/environments/' . $kinsta_env_id . '/downloadable-backups', $kinsta_baseurl, $kinsta_api_key, $action );
+
+		} else {
+			Api_Backups_Utility::log_error( 'Kinsta API Error: ' . $api_response['response'] );
+		}
+
+		if ( $downloadable_backups['status'] === 'true' ) {
+			$downloadable_backups = $downloadable_backups['response'];
+			Api_Backups_Helper::update_website_option( $website_id, 'mainwp_3rd_party_kinsta_downloadable_backups', $downloadable_backups );
+		} else {
+			Api_Backups_Utility::log_error( 'Kinsta API Error: ' . $downloadable_backups['response'] );
+		}
+
 
 		// Return AJAX.
 		if ( is_admin() && defined( 'DOING_AJAX' ) && DOING_AJAX ) {
@@ -4941,7 +4961,7 @@ class Api_Backups_3rd_Party {
 		$payload_url = '/sites/environments/backups/' . $backup_id;
 
 		// Send Payload & create backup.
-		$api_response = self::call_kinsta_api( 'DELETE', $payload_url, $kinsta_baseurl, $kinsta_api_key );
+		$api_response = self::call_kinsta_api( 'DELETE', $payload_url, $kinsta_baseurl, $kinsta_api_key, $action= '' );
 
 		if ( $return ) {
 			return $api_response;
@@ -4970,27 +4990,25 @@ class Api_Backups_3rd_Party {
 
 		// Grab $_POST['backup_id'].
 		$backup_id = $_POST['backup_id'];
-		$environment = $_POST['environment'];
-		$backup_name = $_POST['backup_name'];
+		$backup_id = intval($backup_id);
 
 		// Authenticate kinsta account.
 		$kinsta_authentication_credentials = self::get_kinsta_authentication_credentials();
 		$kinsta_baseurl                    = $kinsta_authentication_credentials[0]['kinsta_baseurl'];
 		$kinsta_api_key                    = $kinsta_authentication_credentials[0]['kinsta_api_key'];
 		$kinsta_env_id                     = $kinsta_authentication_credentials[0]['kinsta_environment_id'];
-		$website_id                        = $kinsta_authentication_credentials[0]['website_id'];
 
-		$payload_url = '/environments/' . $kinsta_env_id . '/backups/restore';
+		$payload_url = '/sites/environments/' . $kinsta_env_id . '/backups/restore';
 
 		// Prepare Backup Payload.
 		$backup_data = array(
-			'backup_id' => $backup_id,
-			'env_display_name_of_backup' => $backup_name,
+			"backup_id" => $backup_id,
+			"notified_user_id" => $kinsta_env_id,
 		);
 		$backup_data = json_encode( $backup_data );
 
 		// Send Payload & create backup.
-		$api_response = self::call_kinsta_api( 'POST', $payload_url, $kinsta_baseurl, $kinsta_api_key, $backup_data );
+		$api_response = self::call_kinsta_api( 'POST', $payload_url, $kinsta_baseurl, $kinsta_api_key, $action = '', $backup_data );
 
 		if ( $return ) {
 			return $api_response;

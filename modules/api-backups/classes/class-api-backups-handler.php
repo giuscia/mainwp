@@ -96,7 +96,7 @@ class Api_Backups_Handler {
 		$app_id     = isset( $site_options['mainwp_3rd_party_app_id'] ) ? $site_options['mainwp_3rd_party_app_id'] : null;
 		$backup_api = isset( $site_options['mainwp_3rd_party_api'] ) ? strtolower( $site_options['mainwp_3rd_party_api'] ) : null;
 
-		if ( 'cpanel' !== $backup_api && 'plesk' !== $backup_api ) {
+		if ( $backup_api !== 'cpanel' && $backup_api !== 'plesk'  && $backup_api !== 'kinsta' ) {
 			if ( empty( $server_id ) || empty( $backup_api ) ) {
 				wp_send_json( array( 'error' => esc_html__( 'Error: Check Backup API settings for the website. Server Id & or Backup API provider not set.', 'mainwp' ) ) );
 			}
@@ -122,7 +122,7 @@ class Api_Backups_Handler {
 						self::send_backups_response();
 					}
 				}
-				break;
+			break;
 			case 'digitalocean':
 				$result = Api_Backups_3rd_Party::digitalocean_action_create_backup( $website_id, $return );
 				if ( $die_output ) {
@@ -136,7 +136,7 @@ class Api_Backups_Handler {
 					}
 					self::send_bulk_backups_error( false, esc_html__( 'Error: DigitalOcean Backup', 'mainwp' ) );
 				}
-				break;
+			break;
 			case 'linode':
 				$result = Api_Backups_3rd_Party::linode_action_create_backup( $website_id, $return );
 				if ( $die_output ) {
@@ -152,7 +152,7 @@ class Api_Backups_Handler {
 					}
 				}
 				self::send_bulk_backups_error( false, esc_html__( 'Error: Linode Backup', 'mainwp' ) );
-				break;
+			break;
 			case 'gridpane':
 				$result = Api_Backups_3rd_Party::gridpane_action_create_backup( $website_id, $return );
 				if ( $die_output ) {
@@ -167,7 +167,7 @@ class Api_Backups_Handler {
 					self::send_bulk_backups_error( false, esc_html__( 'Error: GridPane Backup', 'mainwp' ) );
 				}
 
-				break;
+			break;
 			case 'cloudways':
 				$result = Api_Backups_3rd_Party::cloudways_action_create_backup( $website_id, $return );
 				if ( $die_output ) {
@@ -182,7 +182,7 @@ class Api_Backups_Handler {
 					}
 					self::send_bulk_backups_error( false, esc_html__( 'Error: Cloudways Backup', 'mainwp' ) );
 				}
-				break;
+			break;
 			case 'cpanel':
 				$result = Api_Backups_3rd_Party::cpanel_action_create_manual_backup( $return, $website_id );
 				if ( $die_output ) {
@@ -208,7 +208,7 @@ class Api_Backups_Handler {
 					}
 					self::send_bulk_backups_error( false, esc_html__( 'Error: cPanel Backup', 'mainwp' ) );
 				}
-				break;
+			break;
 			case 'plesk':
 				$result = Api_Backups_3rd_Party::plesk_action_create_backup( $return, $website_id );
 
@@ -226,7 +226,23 @@ class Api_Backups_Handler {
 					}
 					self::send_bulk_backups_error( false, esc_html__( 'Error: Plesk Backup', 'mainwp' ) );
 				}
-				break;
+			break;
+			case 'kinsta':
+				$result = Api_Backups_3rd_Party::kinsta_action_create_backup( $return, $website_id );
+
+				if ( $die_output ) {
+					$api_response = $result;
+					if ( is_array( $api_response ) ) {
+						if ( ! $api_response['status'] === true ) {
+							self::send_backups_response( false );
+						} else {
+							// Return success.
+							self::send_backups_response();
+						}
+					}
+					wp_die( esc_html__( 'Error: Kinsta Backup', 'mainwp' ) );
+				}
+			break;
 		}
 
 		if ( ! empty( $result ) ) {

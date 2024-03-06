@@ -304,6 +304,47 @@ jQuery(document).ready(function () {
         });
     });
 
+	/**
+	 * Kinsta Ajax Hooks
+	 */
+	// Trigger action_refresh_available_backups.
+	jQuery('#mainwp_3rd_party_api_kinsta_action_refresh_available_backups').on('click', function (event) {
+		kinsta_action_refresh_available_backups(this, event);
+	});
+
+	//Trigger action_backup.
+	jQuery('#mainwp_3rd_party_api_kinsta_action_individual_create_backup').on('click', function (event) {
+		kinsta_action_create_backup(this, event);
+	});
+
+	// Trigger Bulk action_create_backup.
+	jQuery('.mainwp_3rd_party_api_kinsta_action_backup').on('click', function (event) {
+		kinsta_action_create_backup(this, event);
+	});
+
+	// Trigger action_delete_backup.
+	jQuery('.mainwp_3rd_party_api_kinsta_action_delete_backup').on('click', function (event) {
+		var confirmMsg = __('Are you sure you want to Delete this backup?');
+		let backupId = jQuery(this).attr('backup_id');
+		mainwp_confirm(confirmMsg, function () {
+			kinsta_action_delete_backup(this, backupId, event);
+		});
+	});
+
+	// Trigger action_restore_backup.
+	jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').on('click', function (event) {
+		var confirmMsg = __('Are you sure you want to Restore this backup?');
+		let backupId = jQuery(this).attr('backup_id');
+		mainwp_confirm(confirmMsg, function () {
+			kinsta_action_restore_backup(this, backupId, event);
+		});
+	});
+
+
+	/**
+	 * Global Bulk Action: backup selected sites.
+	 */
+
     // Trigger action_backup_selected_sites.
     jQuery('#action_backup_selected_sites').on('click', function (event) {
         action_backup_selected_sites(this, event);
@@ -2133,6 +2174,202 @@ plesk_action_delete_backup = function () {
 
         }
     });
+};
+
+/********************************************************
+ * Kinsta Functions.
+ */
+
+// Refresh Available Backups.
+kinsta_action_refresh_available_backups = function (pObj) {
+
+	var websiteId = jQuery(pObj).attr('website_id');
+
+	var data = mainwp_secure_data({
+		action: 'kinsta_action_refresh_available_backups',
+		website_id: websiteId,
+		backup_api: 'Kinsta'
+	});
+
+	// Start button animation.
+	jQuery(pObj).addClass('disabled loading');
+
+	jQuery.post(ajaxurl, data, function (response) {
+		response = jQuery.trim(response);
+
+		if (response === 'true') {
+			jQuery('#backups_site_toast').addClass('green')
+				.toast({
+					class: 'success',
+					position: 'top right',
+					displayTime: 5000,
+					message: 'Available backups have been refreshed.',
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+			setInterval('location.reload()', 7000);// Using .reload() method.
+
+		} else {
+			jQuery('#backups_site_toast').addClass('red')
+				.toast({
+					class: 'warning',
+					position: 'top right',
+					displayTime: 5000,
+					message: 'There was an issue while refreshing available backups.',
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		}
+	});
+};
+
+// Create Manual Backup.
+kinsta_action_create_backup = function (pObj) {
+
+	var websiteId = jQuery(pObj).attr('website_id');
+
+	var data = mainwp_secure_data({
+		action: 'kinsta_action_create_backup',
+		website_id: websiteId,
+		backup_api: 'kinsta'
+	});
+
+	// Start button animation.
+	jQuery(pObj).addClass('disabled loading');
+
+	jQuery.post(ajaxurl, data, function (response) {
+		response = jQuery.trim(response);
+		console.log(response);
+		if (response === 'true') {
+			jQuery('#backups_site_toast').addClass('green')
+				.toast({
+					class: 'success',
+					position: 'top right',
+					displayTime: 9000,
+					message: 'A backup has been requested.',
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		} else {
+			jQuery('#backups_site_toast').addClass('red')
+				.toast({
+					class: 'error',
+					position: 'top right',
+					showIcon: 'exclamation circle',
+					displayTime: 9000,
+					message: response,
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		}
+	});
+};
+
+// Delete Manual Backup.
+kinsta_action_delete_backup = function (pObj, backupId) {
+
+	var data = mainwp_secure_data({
+		action: 'kinsta_action_delete_backup',
+		backup_id: backupId,
+		backup_api: 'kinsta'
+	});
+
+	// Start button animation.
+	jQuery(pObj).addClass('disabled loading');
+
+	jQuery.post(ajaxurl, data, function (response) {
+		response = jQuery.trim(response);
+		console.log(response);
+		if (response === 'true') {
+			jQuery('#backups_site_toast').addClass('green')
+				.toast({
+					class: 'success',
+					position: 'top right',
+					displayTime: 9000,
+					message: 'The backup has been deleted.',
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		} else {
+			jQuery('#backups_site_toast').addClass('red')
+				.toast({
+					class: 'error',
+					position: 'top right',
+					showIcon: 'exclamation circle',
+					displayTime: 9000,
+					message: response,
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		}
+	});
+};
+
+// Delete Manual Backup.
+kinsta_action_restore_backup = function (pObj, backupId) {
+
+	var websiteId = jQuery('.mainwp_3rd_party_api_kinsta_action_restore_backup').attr('website_id');
+
+	var data = mainwp_secure_data({
+		action: 'kinsta_action_restore_backup',
+		backup_id: backupId,
+		backup_api: 'kinsta',
+		website_id: websiteId
+	});
+
+	// Start button animation.
+	jQuery(pObj).addClass('disabled loading');
+
+	jQuery.post(ajaxurl, data, function (response) {
+		response = jQuery.trim(response);
+		console.log(response);
+		if (response === 'true') {
+			jQuery('#backups_site_toast').addClass('green')
+				.toast({
+					class: 'success',
+					position: 'top right',
+					displayTime: 9000,
+					message: 'The backup has been restored.',
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		} else {
+			jQuery('#backups_site_toast').addClass('red')
+				.toast({
+					class: 'error',
+					position: 'top right',
+					showIcon: 'exclamation circle',
+					displayTime: 9000,
+					message: response,
+				})
+			;
+
+			// Stop button animation.
+			jQuery(pObj).removeClass('disabled loading');
+
+		}
+	});
 };
 
 

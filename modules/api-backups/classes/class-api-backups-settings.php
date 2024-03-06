@@ -129,21 +129,20 @@ class Api_Backups_Settings {
 	public static function render_3rd_party_api_manager( $individual = false  ) { //phpcs:ignore -- complex method.
 		$_nonce_slug = $individual ? 'cloudways_api_form_individual' : 'cloudways_api_form_general';
 		?>
-		<div id="3rd-party-api-manager">
-			<div class="ui segment">
+			<div id="3rd-party-api-manager">
+				<div class="ui segment">
 				<div class="ui grid">
 					<div class="three wide column">
 						<div class="ui vertical fluid pointing menu">
 							<h3 class="item ui header"><?php esc_html_e( 'Backup API Providers', 'mainwp' ); ?></h3>
 							<a class="item active" data-tab="cloudways"><?php esc_html_e( 'Cloudways', 'mainwp' ); ?></a>
 							<a class="item" data-tab="gridpane"><?php esc_html_e( 'GridPane', 'mainwp' ); ?></a>
-							
 							<a class="item" data-tab="vultr"><?php echo esc_html__( 'Vultr', 'mainwp' ); ?></a>
 							<a class="item" data-tab="linode"><?php echo esc_html__( 'Akamai (Linode)', 'mainwp' ); ?></a>
 							<a class="item" data-tab="digitalocean"><?php echo esc_html__( 'DigitalOcean', 'mainwp' ); ?></a>
-							
 							<a class="item" data-tab="cpanel"><?php echo esc_html__( 'cPanel (WP Toolkit)', 'mainwp' ); ?></a>
 							<a class="item" data-tab="plesk"><?php echo esc_html__( 'Plesk (WP Toolkit)', 'mainwp' ); ?></a>
+							<a class="item" data-tab="kinsta"><?php echo esc_html__( 'Kinsta', 'mainwp' ); ?></a>
 						</div>
 					</div>
 					<div class="thirteen wide column">
@@ -153,7 +152,7 @@ class Api_Backups_Settings {
 								<?php
 								printf(
 									esc_html__(
-										'These settings allow you to Enable 3rd-Party API functionality within your 
+										'These settings allow you to Enable 3rd-Party API functionality within your
 									MainWP Dashboard. Check this %1$shelp document%2$s to see all available services & the endpoints that MainWP currently supports.',
 										'mainwp'
 									),
@@ -227,10 +226,14 @@ class Api_Backups_Settings {
 							?>
 							<div class="ui green message"><i class="close icon"></i><?php esc_html_e( 'API credentials have been successfully saved.', 'mainwp' ); ?></div>
 						<?php endif; ?>
-						<?php
-						//phpcs:enable
-						// END Save GridPane Data.
-						?>
+						<?php // END Save Plesk Data.?>
+						<?php // Save Kinsta Data. ?>
+						<?php if ( isset( $_POST['submit'] ) && isset( $_POST['wp_nonce'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_nonce'] ), 'kinsta_api_form' ) ) : ?>
+							<?php Api_Backups_Utility::update_option( 'mainwp_enable_kinsta_api', ( ! isset( $_POST['mainwp_enable_kinsta_api'] ) ? 0 : 1 ) ); ?>
+							<?php Api_Backups_Utility::get_instance()->update_api_key( 'kinsta', $_POST['mainwp_kinsta_api_key'] ); ?>
+							<div class="ui green message"><i class="close icon"></i><?php esc_html_e( 'API credentials have been successfully saved.', 'mainwp' ); ?></div>
+						<?php endif; ?>
+						<?php // END Save Kinsta Data. ?>
 						<div class="ui tab segment active" data-tab="cloudways">
 							<h3 class="ui dividing header"><?php esc_html_e( 'Cloudways API Settings', 'mainwp' ); ?></h3>
 							<ul>
@@ -655,6 +658,62 @@ class Api_Backups_Settings {
 							</div>
 						</div>
 
+						<?php # Build Kinsta API Form. ?>
+						<div class="ui tab segment" data-tab="kinsta">
+							<h3 class="ui dividing header"><?php esc_html_e( 'Kinsta', 'mainwp' ); ?></h3>
+							<ul>
+								<li><?php printf( esc_html__( "1. If you don't already have one, get a %s", 'mainwp' ), '<a target="_blank" href="https://mainwp.com/go/digital-ocean/">Kinsta account</a>' ); ?></li>
+								<li><?php printf( esc_html__( '2. You can generate an %1$sOAuth token%2$s by visiting the %3$s section of the Kinsta control panel for your account.', 'mainwp' ), '<b>', '</b>', '<a target="_blank" href="https://cloud.kinsta.com/account/api/tokens">Apps & API</a>' ); ?></b></li>
+								<li><?php printf( esc_html__( '3. Paste in your %1$sPersonal Access Token%2$s below and click the Save Settings button.', 'mainwp' ), '<b>', '</b>' ); ?></li>
+								<li><?php esc_html_e( '4. Once the API is connected, go to the Site Edit page (for all sites on this host) and set the correct Provider and Instance ID.', 'mainwp' ); ?></li>
+							</ul>
+							<div class="ui hidden divider"></div>
+							<div class="ui form">
+								<form method="POST" action="">
+									<?php wp_nonce_field( 'mainwp-admin-nonce' ); ?>
+									<input type="hidden" name="wp_nonce_kinsta" value="<?php echo esc_attr( wp_create_nonce( $_nonce_slug ) ); ?>" />
+									<?php
+										/**
+										 * Action: kinsta_api_form_top
+										 *
+										 * Fires at the top of Kinsta API form.
+										 *
+										 * @since 4.1
+										 */
+										do_action( 'kinsta_api_form_top' );
+									?>
+									<div class="ui grid field">
+										<label class="six wide column middle aligned"><?php esc_html_e( 'Enable Kinsta API', 'mainwp' ); ?></label>
+										<div class="ten wide column ui toggle checkbox" data-tooltip="<?php esc_attr_e( 'If enabled, the Kinsta API will be activated.', 'mainwp' ); ?>" data-inverted="" data-position="bottom left">
+											<input type="checkbox" name="mainwp_enable_kinsta_api" id="mainwp_enable_kinsta_api" <?php echo ( ( 1 === (int) get_option( 'mainwp_enable_kinsta_api', 0 ) ) ? 'checked="true"' : '' ); ?> />
+										</div>
+									</div>
+									<?php
+										$_api_key = Api_Backups_3rd_Party::get_kinsta_api_key();
+									?>
+									<div class="ui grid field">
+										<label class="six wide column middle aligned"><?php esc_html_e( 'API Key', 'mainwp' ); ?></label>
+										<div class="five wide column">
+											<input type="password" name="mainwp_kinsta_api_key" id="mainwp_kinsta_api_key" value="<?php echo esc_attr( $_api_key ); ?>"  />
+										</div>
+									</div>
+									<?php
+										/**
+										 * Action: kinsta_api_form_bottom
+										 *
+										 * Fires at the bottom of Kinsta API form.
+										 *
+										 * @since 4.1
+										 */
+										do_action( 'kinsta_api_form_bottom' );
+									?>
+									<div class="ui divider"></div>
+									<input type="submit" name="submit" id="submit" class="ui green big button" value="<?php esc_attr_e( 'Save Settings', 'mainwp' ); ?>"/>
+									<div style="clear:both"></div>
+								</form>
+							</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
@@ -684,18 +743,29 @@ class Api_Backups_Settings {
 		$api_backup_provider      = isset( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) && ! empty( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) ? intval( $_POST['mainwp_managesites_edit_module_api_backups_provider'] ) : '';
 		$api_backup_provider_name = '';
 
-		if ( ! empty( $api_backup_provider ) ) {
-			if ( 1 === $api_backup_provider ) {
+		if ( empty( $api_backup_provider ) ) {
+			return;
+		}
+
+		switch( $api_backup_provider ) {
+			case 1:
 				$api_backup_provider_name = 'DigitalOcean';
-			} elseif ( 2 === $api_backup_provider ) {
+				break;
+			case 2:
 				$api_backup_provider_name = 'Linode';
-			} elseif ( 3 === $api_backup_provider ) {
+				break;
+			case 3:
 				$api_backup_provider_name = 'Vultr';
-			} elseif ( 4 === $api_backup_provider ) {
+				break;
+			case 4:
 				$api_backup_provider_name = 'cPanel';
-			} elseif ( 5 === $api_backup_provider ) {
+				break;
+			case 5:
 				$api_backup_provider_name = 'Plesk';
-			}
+				break;
+			case 6:
+				$api_backup_provider_name = 'Kinsta';
+				break;
 		}
 
 		// Store the 3rd Party Backup Provider.
@@ -744,7 +814,18 @@ class Api_Backups_Settings {
 		// Store Plesk Individual API Key.
 		$plesk_api_key = isset( $_POST['mainwp_plesk_api_key'] ) ? wp_unslash( $_POST['mainwp_plesk_api_key'] ) : ''; //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		Api_Backups_Utility::get_instance()->update_child_api_key( $website_id, 'plesk', $plesk_api_key );
-		//phpcs:enable
+
+		// Store Kinsta Individual or Global toggle.
+		$enable_kinsta_individual = isset( $_POST['mainwp_enable_kinsta_individual'] ) ? wp_unslash( $_POST['mainwp_enable_kinsta_individual'] ) : '0';
+		Api_Backups_Helper::update_website_option( $website_id, 'mainwp_enable_kinsta_individual', $enable_kinsta_individual );
+
+		// Store Kinsta Environment ID.
+		$kinsta_environment_id = isset( $_POST['kinsta_environment_id'] ) ? wp_unslash( $_POST['kinsta_environment_id'] ) : '0';
+		Api_Backups_Helper::update_website_option( $website_id, 'mainwp_kinsta_environment_id', $kinsta_environment_id );
+
+		// Store Kinsta Individual API Key.
+		$kinsta_api_key = isset( $_POST['mainwp_kinsta_api_key'] ) ? wp_unslash( $_POST['mainwp_kinsta_api_key'] ) : '';
+		Api_Backups_Utility::get_instance()->update_child_api_key( $website_id, 'kinsta', $kinsta_api_key );
 	}
 
 	/**
@@ -779,11 +860,13 @@ class Api_Backups_Settings {
 					'mainwp_enable_wp_toolkit',
 					'mainwp_enable_cpanel_individual',
 					'mainwp_enable_plesk_individual',
+					'mainwp_enable_kinsta_individual',
 					'cpanel_api_url',
 					'cpanel_site_path',
 					'cpanel_account_username',
 					'plesk_api_url',
 					'mainwp_plesk_installation_id',
+					'mainwp_kinsta_environment_id',
 				)
 			);
 
@@ -796,11 +879,13 @@ class Api_Backups_Settings {
 				$mainwp_enable_wp_toolkit             = isset( $opts['mainwp_enable_wp_toolkit'] ) ? $opts['mainwp_enable_wp_toolkit'] : '0';
 				$mainwp_enable_cpanel_individual      = isset( $opts['mainwp_enable_cpanel_individual'] ) ? $opts['mainwp_enable_cpanel_individual'] : '0';
 				$mainwp_enable_plesk_individual       = isset( $opts['mainwp_enable_plesk_individual'] ) ? $opts['mainwp_enable_plesk_individual'] : '0';
+				$mainwp_enable_kinsta_individual      = isset( $opts['mainwp_enable_kinsta_individual'] ) ? $opts['mainwp_enable_kinsta_individual'] : '0';
 				$mainwp_cpanel_api_url                = isset( $opts['cpanel_api_url'] ) ? $opts['cpanel_api_url'] : '';
 				$mainwp_cpanel_site_path              = isset( $opts['cpanel_site_path'] ) ? $opts['cpanel_site_path'] : '';
 				$mainwp_cpanel_account_username       = isset( $opts['cpanel_account_username'] ) ? $opts['cpanel_account_username'] : '';
 				$mainwp_plesk_api_url                 = isset( $opts['plesk_api_url'] ) ? $opts['plesk_api_url'] : '';
 				$mainwp_plesk_installation_id         = isset( $opts['mainwp_plesk_installation_id'] ) ? $opts['mainwp_plesk_installation_id'] : '';
+				$mainwp_kinsta_environment_id         = isset( $opts['mainwp_kinsta_environment_id'] ) ? $opts['mainwp_kinsta_environment_id'] : '';
 			}
 		}
 
@@ -811,7 +896,7 @@ class Api_Backups_Settings {
 			<div class="sub header"><?php esc_html_e( 'Use these settings to select Provider and instance ID only if the site is hosted on DigitalOcean, Akamai (Linode), or Vultr hosting.', 'mainwp' ); ?></div>
 			<div class="sub header"><?php esc_html_e( 'Sites hosted on Cloudways and GridPane do not require these settings to be added manually. All the necessary info for the feature will be obtained automatically so you can leave these settings blank.', 'mainwp' ); ?></div>
 		</h3>
-		<?php if ( '' === $mainwp_3rd_party_api || 'cPanel' === $mainwp_3rd_party_api || 'Plesk' === $mainwp_3rd_party_api ) : ?>
+		<?php if ( '' === $mainwp_3rd_party_api || 'cPanel' === $mainwp_3rd_party_api || 'Plesk' === $mainwp_3rd_party_api || 'Kinsta' === $mainwp_3rd_party_api ) : ?>
 			<div class="ui grid field">
 				<label class="six wide column middle aligned"><?php esc_html_e( 'Choose a provider', 'mainwp' ); ?></label>
 				<div class="ui six wide column" data-tooltip="<?php esc_attr_e( 'Detected provider', 'mainwp' ); ?>" data-inverted="" data-position="top left">
@@ -822,6 +907,7 @@ class Api_Backups_Settings {
 						<option <?php echo ( 'Vultr' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="3"><?php esc_html_e( 'Vultr', 'mainwp' ); ?></option>
 						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel (WP Toolkit)', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Plesk' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="5"><?php esc_html_e( 'Plesk (WP Toolkit)', 'mainwp' ); ?></option>
+						<option <?php echo ( 'Kinsta' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="6"><?php esc_html_e( 'Kinsta', 'mainwp' ); ?></option>
 					</select>
 				</div>
 			</div>
@@ -914,6 +1000,36 @@ class Api_Backups_Settings {
 				</div>
 			</div>
 
+			<div class="mainwp_kinsta_menu_container" style="display:none;">
+				<div class="ui grid field">
+					<label class="six wide column middle aligned"><?php esc_html_e( 'Environment ID', 'mainwp' ); ?></label>
+					<div class="ui six wide column" data-tooltip="<?php esc_attr_e( 'Enter the Kinsta Environment ID.', 'mainwp' ); ?>" data-inverted="" data-position="top left">
+						<div class="ui left labeled input">
+							<input type="text" id="kinsta_environment_id" name="kinsta_environment_id" value="<?php echo ( empty( $mainwp_kinsta_environment_id ) ? '' : esc_html( $mainwp_kinsta_environment_id ) ); ?>" />
+						</div>
+					</div>
+				</div>
+				<div class="ui grid field">
+					<label class="six wide column middle aligned"><?php esc_html_e( 'Overwrite Global Settings', 'mainwp' ); ?></label>
+					<div id="individual_settings_check" class="ten wide column ui toggle checkbox" data-tooltip="<?php esc_attr_e( 'If enabled, the Kinsta Individual Settings will be used.', 'mainwp' ); ?>" data-inverted="" data-position="bottom left">
+						<input type="checkbox" name="mainwp_enable_kinsta_individual" id="mainwp_enable_kinsta_individual" <?php echo ( ( 'on' === $mainwp_enable_kinsta_individual ) ? 'checked="true"' : 'off' ); ?> />
+					</div>
+				</div>
+				<div class="mainwp_kinsta_individual_container" style="display:none;">
+					<div class="ui grid field">
+						<label class="six wide column middle aligned"><?php esc_html_e( 'API Key', 'mainwp' ); ?></label>
+						<div class="ui six wide column" data-tooltip="<?php esc_attr_e( 'Enter the Kinsta API Key', 'mainwp' ); ?>" data-inverted="" data-position="top left">
+							<div class="ui left labeled input">
+								<?php
+									$kinsta_api_key = Api_Backups_Utility::get_instance()->get_child_api_key( $website, 'kinsta' );
+								?>
+								<input type="password" name="mainwp_kinsta_api_key" id="mainwp_kinsta_api_key" value="<?php echo esc_attr( $kinsta_api_key ); ?>"  />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="ui hidden divider"></div>
 		<?php elseif ( 'DigitalOcean' === $mainwp_3rd_party_api || 'Linode' === $mainwp_3rd_party_api || 'Vultr' === $mainwp_3rd_party_api ) : ?>
 			<div class="ui grid field">
@@ -926,6 +1042,7 @@ class Api_Backups_Settings {
 						<option <?php echo ( 'Vultr' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="3"><?php esc_html_e( 'Vultr', 'mainwp' ); ?></option>
 						<option <?php echo ( 'cPanel' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="4"><?php esc_html_e( 'cPanel (WP Toolkit)', 'mainwp' ); ?></option>
 						<option <?php echo ( 'Plesk' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="5"><?php esc_html_e( 'Plesk (WP Toolkit)', 'mainwp' ); ?></option>
+						<option <?php echo ( 'Kinsta' === $mainwp_3rd_party_api ) ? 'selected' : ''; ?> value="6"><?php esc_html_e( 'Kinsta', 'mainwp' ); ?></option>
 					</select>
 				</div>
 			</div>
@@ -992,12 +1109,19 @@ class Api_Backups_Settings {
 				if ( dropdown_selection === '4' ) {
 					jQuery('.mainwp_cpanel_menu_container').show();
 					jQuery('.mainwp_plesk_menu_container').hide();
+					jQuery('.mainwp_kinsta_menu_container').hide();
 				} else if ( dropdown_selection === '5' ) {
-					jQuery('.mainwp_plesk_menu_container').show();
 					jQuery('.mainwp_cpanel_menu_container').hide();
+					jQuery('.mainwp_plesk_menu_container').show();
+					jQuery('.mainwp_kinsta_menu_container').hide();
+				} else if ( dropdown_selection === '6' ) {
+					jQuery('.mainwp_cpanel_menu_container').hide();
+					jQuery('.mainwp_plesk_menu_container').hide();
+					jQuery('.mainwp_kinsta_menu_container').show();
 				} else {
 					jQuery('.mainwp_cpanel_menu_container').hide();
 					jQuery('.mainwp_plesk_menu_container').hide();
+					jQuery('.mainwp_kinsta_menu_container').hide();
 				}
 
 
@@ -1006,39 +1130,51 @@ class Api_Backups_Settings {
 					jQuery('.mainwp_cpanel_individual_container').show();
 				} else if ( jQuery( "#mainwp_enable_plesk_individual" ).is( ":checked" ) ) {
 					jQuery('.mainwp_plesk_individual_container').show();
+				} else if ( jQuery( "#mainwp_enable_kinsta_individual" ).is( ":checked" ) ) {
+					jQuery('.mainwp_kinsta_individual_container').show();
 				} else {
 					jQuery('.mainwp_cpanel_individual_container').hide();
 					jQuery('.mainwp_plesk_individual_container').hide();
+					jQuery('.mainwp_kinsta_individual_container').hide();
 				}
 
-				// Check if cPanel is selected when using dropdown.
+				// Check which Provider is `selected` when using dropdown & show/hide the appropriate settings.
 				jQuery( "#mainwp_managesites_edit_module_api_backups_provider" ).on( "change", function() {
 
 					var selected = jQuery(this).val();
 
-					if ( selected === '4') {
-						jQuery( '.mainwp_cpanel_menu_container').show();
-						jQuery( '.mainwp_plesk_menu_container').hide();
-					} else if ( selected === '5' ){
-						jQuery( '.mainwp_plesk_menu_container').show();
-						jQuery( '.mainwp_cpanel_menu_container').hide();
+					if ( selected === '4' ) {
+						jQuery('.mainwp_cpanel_menu_container').show();
+						jQuery('.mainwp_plesk_menu_container').hide();
+						jQuery('.mainwp_kinsta_menu_container').hide();
+					} else if ( selected === '5' ) {
+						jQuery('.mainwp_cpanel_menu_container').hide();
+						jQuery('.mainwp_plesk_menu_container').show();
+						jQuery('.mainwp_kinsta_menu_container').hide();
+					} else if ( selected === '6' ) {
+						jQuery('.mainwp_cpanel_menu_container').hide();
+						jQuery('.mainwp_plesk_menu_container').hide();
+						jQuery('.mainwp_kinsta_menu_container').show();
 					} else {
-						jQuery( '.mainwp_cpanel_menu_container').hide();
-						jQuery( '.mainwp_plesk_menu_container').hide();
+						jQuery('.mainwp_cpanel_menu_container').hide();
+						jQuery('.mainwp_plesk_menu_container').hide();
+						jQuery('.mainwp_kinsta_menu_container').hide();
 					}
 				} );
 
 				// Toggle cPanel Individual Settings on/off when clicked.
 				jQuery( "#mainwp_enable_cpanel_individual" ).on( "change", function() {
-
 					jQuery('.mainwp_cpanel_individual_container').toggle();
-
 				} );
 
 				// Toggle Plesk Individual Settings on/off when clicked.
 				jQuery( "#mainwp_enable_plesk_individual" ).on( "change", function() {
-
 					jQuery('.mainwp_plesk_individual_container').toggle();
+				} );
+
+				// Toggle Plesk Individual Settings on/off when clicked.
+				jQuery( "#mainwp_enable_kinsta_individual" ).on( "change", function() {
+					jQuery('.mainwp_kinsta_individual_container').toggle();
 				} );
 			} );
 		</script>
